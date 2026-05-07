@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0057B8">
+<title>Azul Plin · Diretor</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#0057B8;--azul2:#0078E7;--verde:#00A651;--verde2:#00C060;--amarelo:#F4C430;--vermelho:#EF476F;--pendente:#F4A261;--bg:#06090f;--s1:#0c1220;--s2:#121a2e;--s3:#1a2440;--gold:#F4C430;--branco:#e8f4ff;--cinza:#5a7a9a;--border:rgba(0,120,231,.12);--border2:rgba(255,255,255,.06);--font:'Exo 2',sans-serif;--mono:'DM Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--bg);color:var(--branco);min-height:100dvh;max-width:480px;margin:0 auto;padding-bottom:80px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,87,184,.15),transparent 55%);pointer-events:none;z-index:0}
+
+.nav-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:200;background:#0c1220;border-top:1px solid rgba(244,196,48,.15);display:flex;align-items:center;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;flex:1;padding:4px 0}
+.nav-icon{font-size:20px}.nav-label{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--cinza)}
+.nav-item.active .nav-label{color:var(--gold)}
+.nav-divider{width:1px;height:30px;background:rgba(255,255,255,.06)}
+
+.login-screen{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
+.login-screen.hide{display:none}
+.login-logo{margin-bottom:20px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.login-title{font-size:24px;font-weight:900;color:#fff;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--cinza);margin-bottom:28px}
+.login-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:340px}
+.l-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--cinza);margin-bottom:8px;text-align:left}
+.l-input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;color:var(--branco);font-family:var(--mono);font-size:22px;letter-spacing:.25em;text-align:center;outline:none;margin-bottom:14px;transition:border-color .2s}
+.l-input:focus{border-color:var(--gold)}
+.btn-entrar{width:100%;background:linear-gradient(135deg,var(--gold),#c8a000);border:none;border-radius:12px;padding:15px;color:#000;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer}
+.l-erro{color:var(--vermelho);font-size:12px;margin-top:8px;display:none}.l-erro.show{display:block}
+
+.app{display:none;position:relative;z-index:1}.app.show{display:block}
+.hdr{padding:16px 18px 0;background:var(--s1);border-bottom:1px solid var(--border2)}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.hdr-logo{display:flex;align-items:center;gap:8px}
+.hdr-marca{line-height:1}
+.hdr-azul{font-size:13px;font-weight:900;color:#fff;letter-spacing:.06em}
+.hdr-plin{font-size:13px;font-weight:900;color:var(--verde2);letter-spacing:.06em}
+.hdr-gold{font-size:9px;color:var(--gold);letter-spacing:.15em;text-transform:uppercase}
+.btn-sair{background:transparent;border:1px solid var(--border2);border-radius:8px;padding:5px 11px;color:var(--cinza);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.hdr-name{font-size:20px;font-weight:800;color:#fff;margin-bottom:2px}
+.hdr-sub{font-size:11px;color:var(--cinza);padding-bottom:14px}
+
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--border2);position:sticky;top:0;z-index:40;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:11px 12px;text-align:center;font-size:11px;font-weight:700;color:var(--cinza);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.tab-content{display:none;padding:14px}.tab-content.on{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* VISÃO */
+.ciclo-card{background:linear-gradient(135deg,var(--azul),var(--azul2));border:1px solid rgba(0,120,231,.35);border-radius:20px;padding:16px;margin-bottom:12px}
+.cc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.45);margin-bottom:4px}
+.cc-val{font-family:var(--mono);font-size:13px;font-weight:700;color:#fff;margin-bottom:10px}
+.cc-bar-bg{height:7px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;margin-bottom:5px}
+.cc-bar-fill{height:100%;background:linear-gradient(90deg,var(--verde2),#00e5a0);border-radius:99px}
+.cc-info{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.4)}
+.btn-abrir{background:var(--gold);border:none;border-radius:10px;padding:10px;color:#000;font-family:var(--font);font-size:12px;font-weight:800;cursor:pointer;margin-top:10px;width:100%}
+.btn-abrir.off{background:var(--cinza);color:rgba(255,255,255,.4);cursor:not-allowed}
+.lucro-card{background:linear-gradient(135deg,rgba(0,166,81,.14),rgba(0,166,81,.04));border:1px solid rgba(0,166,81,.22);border-radius:18px;padding:16px;margin-bottom:12px}
+.lc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--verde2);margin-bottom:5px}
+.lc-val{font-family:var(--mono);font-size:32px;font-weight:700;color:var(--verde2);line-height:1}
+.lc-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:6px}
+.big-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.bg-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:12px 14px}
+.bgc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);margin-bottom:3px}
+.bgc-val{font-family:var(--mono);font-size:18px;font-weight:700;color:#fff}
+.bgc-val.g{color:var(--verde2)}.bgc-val.a{color:var(--azul2)}.bgc-val.o{color:var(--pendente)}
+.bgc-sub{font-size:10px;color:var(--cinza);margin-top:1px}
+.sec-tit{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--cinza);margin-bottom:8px}
+.rank-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:11px 14px;margin-bottom:7px;display:flex;align-items:center;gap:10px}
+.rank-medal{font-size:20px}
+.rank-info{flex:1}
+.rank-nome{font-size:13px;font-weight:700;color:#fff}
+.rank-det{font-size:10px;color:var(--cinza);margin-top:1px}
+.rank-val{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--verde2);text-align:right}
+.rank-lbl{font-size:9px;color:var(--cinza);text-align:right}
+
+/* PREÇOS */
+.prec-card{background:var(--s1);border:1px solid rgba(244,196,48,.2);border-radius:18px;padding:16px;margin-bottom:14px}
+.pg-title{font-size:13px;font-weight:800;color:var(--gold);margin-bottom:4px}
+.pg-sub{font-size:11px;color:var(--cinza);margin-bottom:14px;line-height:1.5}
+.prec-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.pf{background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:12px}
+.pf-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);margin-bottom:5px}
+.pf-wrap{display:flex;align-items:center;gap:4px}
+.pf-input{flex:1;background:transparent;border:none;color:var(--branco);font-family:var(--mono);font-size:20px;font-weight:700;outline:none;width:100%;min-width:0}
+.pf-unit{font-family:var(--mono);font-size:13px;color:var(--cinza)}
+.pf-desc{font-size:10px;color:var(--cinza);margin-top:4px;line-height:1.4}
+.btn-salvar-g{width:100%;background:var(--gold);border:none;border-radius:10px;padding:12px;color:#000;font-family:var(--font);font-size:13px;font-weight:800;cursor:pointer}
+
+/* EDITAR FOTO PRODUTOS */
+.prod-foto-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;padding:10px 14px}
+.pf-img{width:56px;height:56px;border-radius:10px;object-fit:contain;background:rgba(255,255,255,.04);padding:4px;flex-shrink:0;border:1px solid var(--border2)}
+.pf-info{flex:1;min-width:0}
+.pf-nome{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf-cod{font-family:var(--mono);font-size:10px;color:var(--cinza);margin-top:2px}
+.btn-ef{background:rgba(244,196,48,.1);border:1px solid rgba(244,196,48,.25);border-radius:8px;padding:6px 12px;color:var(--gold);font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.busca-prod{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;color:var(--branco);font-family:var(--font);font-size:13px;outline:none;margin-bottom:10px}
+.busca-prod:focus{border-color:var(--gold)}
+
+/* EQUIPE */
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.btn-novo{background:var(--azul2);border:none;border-radius:8px;padding:7px 14px;color:#fff;font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer}
+.v-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.vc2-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.vc2-info{display:flex;align-items:center;gap:10px}
+.vc2-av{width:36px;height:36px;background:linear-gradient(135deg,var(--azul),var(--azul2));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.vc2-nome{font-size:13px;font-weight:700;color:#fff}
+.vc2-pin{font-family:var(--mono);font-size:10px;color:var(--cinza);margin-top:1px}
+.vc2-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.vc2-stat{background:var(--s2);border-radius:7px;padding:7px;text-align:center}
+.vc2-sl{font-size:8px;color:var(--cinza);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px}
+.vc2-sv{font-family:var(--mono);font-size:12px;font-weight:700;color:#fff}
+.vc2-sv.g{color:var(--verde2)}
+.btn-del{background:rgba(239,71,111,.1);border:1px solid rgba(239,71,111,.2);border-radius:7px;padding:5px 9px;color:var(--vermelho);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
+
+/* PEDIDOS */
+.filtros-status{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.filtros-status::-webkit-scrollbar{display:none}
+.fsb{flex-shrink:0;background:var(--s2);border:1px solid var(--border2);border-radius:99px;padding:5px 12px;color:var(--cinza);font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap}
+.fsb.on{background:var(--azul2);border-color:var(--azul2);color:#fff}
+.ped-card{background:var(--s1);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;margin-bottom:7px}
+.pc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
+.pc-cli{font-size:13px;font-weight:700;color:#fff}
+.pc-tot{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--azul2)}
+.pc-tags{display:flex;gap:5px;flex-wrap:wrap}
+.ptag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px}
+.ptc{background:rgba(0,192,96,.1);color:var(--verde2);border:1px solid rgba(0,192,96,.2)}
+.ptd{background:rgba(255,255,255,.04);color:var(--cinza);border:1px solid var(--border2)}
+.pto{background:rgba(244,162,97,.1);color:var(--pendente);border:1px solid rgba(244,162,97,.2)}
+.ptv{background:rgba(0,120,231,.1);color:#7fbaff;border:1px solid rgba(0,120,231,.2)}
+.ptl{background:rgba(244,196,48,.08);color:var(--gold);border:1px solid rgba(244,196,48,.15)}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;backdrop-filter:blur(6px);align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--s1);border:1px solid var(--border);border-radius:22px 22px 0 0;width:100%;max-height:85dvh;overflow-y:auto;animation:upSlide .3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes upSlide{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ms-handle{width:36px;height:4px;background:var(--border2);border-radius:99px;margin:12px auto}
+.ms-head{padding:0 18px 14px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.ms-title{font-size:16px;font-weight:800;color:#fff}
+.btn-fm{background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:5px 12px;color:var(--cinza);font-size:11px;cursor:pointer;font-family:var(--font)}
+.ms-body{padding:18px}
+.ms-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--cinza);margin:10px 0 5px}
+.ms-input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:11px 13px;color:var(--branco);font-family:var(--font);font-size:14px;outline:none;transition:border-color .2s;margin-bottom:4px}
+.ms-input:focus{border-color:var(--gold)}
+.ms-hint{font-size:10px;color:var(--cinza);margin-bottom:10px}
+.ms-preview{width:100%;height:150px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-bottom:12px;overflow:hidden}
+.ms-preview img{max-width:100%;max-height:100%;object-fit:contain;padding:10px}
+.btn-sv{width:100%;background:linear-gradient(135deg,var(--azul),var(--azul2));border:none;border-radius:12px;padding:13px;color:#fff;font-family:var(--font);font-size:14px;font-weight:800;cursor:pointer;margin-top:8px}
+
+.empty{text-align:center;padding:40px 20px;color:var(--cinza)}.empty .ei{font-size:36px;margin-bottom:10px;opacity:.5}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--verde);color:#fff;padding:10px 20px;border-radius:99px;font-size:12px;font-weight:700;z-index:500;opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAIYIqc9ie9yiHmR3wsmzXIPz32Ilk50Ww",
+  authDomain: "azul-plin-shop.firebaseapp.com",
+  projectId: "azul-plin-shop",
+  storageBucket: "azul-plin-shop.firebasestorage.app",
+  messagingSenderId: "1066498043732",
+  appId: "1:1066498043732:web:3c622747dff78e2799a2c1"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window.fbGet = async (path) => { const snap = await get(ref(db, path)); return snap.exists() ? snap.val() : null; };
+window.fbSet = async (path, val) => { await set(ref(db, path), val); };
+window.fbListen = (path, cb) => { onValue(ref(db, path), snap => cb(snap.exists() ? snap.val() : null)); };
+window.firebaseReady = true;
+window.dispatchEvent(new Event('firebaseReady'));
+</script>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-logo">
+    <svg width="72" height="86" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0096FF"/><stop offset="100%" style="stop-color:#0057B8"/></linearGradient>
+        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00C060"/><stop offset="100%" style="stop-color:#0096FF"/></linearGradient>
+      </defs>
+      <path d="M50 5 C50 5 10 55 10 78 C10 101 28 115 50 115 C72 115 90 101 90 78 C90 55 50 5 50 5Z" fill="url(#g1)" opacity=".95"/>
+      <path d="M15 82 Q30 68 50 78 Q70 88 85 74 L85 95 Q72 110 50 112 Q28 113 15 98Z" fill="url(#g2)" opacity=".9"/>
+      <ellipse cx="35" cy="50" rx="8" ry="14" fill="white" opacity=".22" transform="rotate(-15,35,50)"/>
+    </svg>
+  </div>
+  <div class="login-title">👑 Painel do Diretor</div>
+  <div class="login-sub">Azul Plin Soluções · Acesso restrito</div>
+  <div class="login-card">
+    <div class="l-label">PIN do Diretor</div>
+    <input class="l-input" id="pinInput" type="tel" maxlength="6" placeholder="••••" oninput="this.value=this.value.replace(/\D/g,'')">
+    <button class="btn-entrar" onclick="login()">Entrar →</button>
+    <div class="l-erro" id="loginErro">PIN incorreto.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="hdr-logo">
+        <svg width="26" height="32" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="gh1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0096FF"/><stop offset="100%" style="stop-color:#0057B8"/></linearGradient><linearGradient id="gh2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00C060"/><stop offset="100%" style="stop-color:#0096FF"/></linearGradient></defs>
+          <path d="M50 5 C50 5 10 55 10 78 C10 101 28 115 50 115 C72 115 90 101 90 78 C90 55 50 5 50 5Z" fill="url(#gh1)"/>
+          <path d="M15 82 Q30 68 50 78 Q70 88 85 74 L85 95 Q72 110 50 112 Q28 113 15 98Z" fill="url(#gh2)" opacity=".9"/>
+        </svg>
+        <div class="hdr-marca"><div class="hdr-azul">AZUL</div><div class="hdr-plin">PLIN</div><div class="hdr-gold">Diretor</div></div>
+      </div>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+    <div class="hdr-name">Painel Completo</div>
+    <div class="hdr-sub" id="hdrSub">—</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="setTab('visao',this)">📊 Visão</div>
+    <div class="tab" onclick="setTab('prec',this)">💲 Preços</div>
+    <div class="tab" onclick="setTab('fotos',this)">📷 Fotos</div>
+    <div class="tab" onclick="setTab('equipe',this)">👥 Equipe</div>
+    <div class="tab" onclick="setTab('pedidos',this)">📦 Pedidos</div>
+  </div>
+
+  <!-- VISÃO -->
+  <div class="tab-content on" id="tab-visao">
+    <div class="ciclo-card">
+      <div class="cc-label">Ciclo atual (35 dias)</div>
+      <div class="cc-val" id="ccVal">—</div>
+      <div class="cc-bar-bg"><div class="cc-bar-fill" id="ccBar" style="width:0%"></div></div>
+      <div class="cc-info"><span id="ccInicio">—</span><span id="ccFim">—</span></div>
+      <button class="btn-abrir" id="btnAbrir" onclick="abrirCaixa()">—</button>
+    </div>
+    <div class="lucro-card">
+      <div class="lc-label">💰 Lucro Azul Plin — ciclo atual</div>
+      <div class="lc-val" id="lucroVal">R$ 0,00</div>
+      <div class="lc-sub" id="lucroSub">—</div>
+    </div>
+    <div class="big-grid">
+      <div class="bg-card"><div class="bgc-label">Total vendido</div><div class="bgc-val a" id="gVendido" style="font-size:15px">R$0</div><div class="bgc-sub">confirmado</div></div>
+      <div class="bg-card"><div class="bgc-label">Pedidos</div><div class="bgc-val" id="gPedidos">0</div><div class="bgc-sub">confirmados</div></div>
+      <div class="bg-card"><div class="bgc-label">Orçamentos</div><div class="bgc-val o" id="gOrc">0</div><div class="bgc-sub">pendentes</div></div>
+      <div class="bg-card"><div class="bgc-label">Comissões</div><div class="bgc-val g" id="gComis" style="font-size:15px">R$0</div><div class="bgc-sub">pagas</div></div>
+    </div>
+    <div class="sec-tit">🏆 Ranking vendedores</div>
+    <div id="rankingList"></div>
+  </div>
+
+  <!-- PREÇOS -->
+  <div class="tab-content" id="tab-prec">
+    <div class="prec-card">
+      <div class="pg-title">⚙️ Configuração global de preços</div>
+      <div class="pg-sub">Percentuais aplicados a todos os produtos. Alterações refletem na loja imediatamente.</div>
+      <div class="prec-grid">
+        <div class="pf">
+          <div class="pf-label">Desconto Felim</div>
+          <div class="pf-wrap"><input class="pf-input" id="gDesc" type="number" min="0" max="99" step="0.1" value="25"><span class="pf-unit">%</span></div>
+          <div class="pf-desc">Desconto que você tem com a Felim sobre o preço de tabela.</div>
+        </div>
+        <div class="pf">
+          <div class="pf-label">Margem Azul Plin</div>
+          <div class="pf-wrap"><input class="pf-input" id="gMarg" type="number" min="0" max="300" step="0.1" value="37"><span class="pf-unit">%</span></div>
+          <div class="pf-desc">Margem aplicada sobre o custo para chegar ao preço final.</div>
+        </div>
+        <div class="pf">
+          <div class="pf-label">Comissão vendedor</div>
+          <div class="pf-wrap"><input class="pf-input" id="gComissao" type="number" min="0" max="50" step="0.1" value="6"><span class="pf-unit">%</span></div>
+          <div class="pf-desc">% do preço final para o vendedor(a) em cada venda confirmada.</div>
+        </div>
+        <div class="pf">
+          <div class="pf-label">% OFF Promoções</div>
+          <div class="pf-wrap"><input class="pf-input" id="gDescProm" type="number" min="0" max="80" step="0.1" value="10"><span class="pf-unit">%</span></div>
+          <div class="pf-desc">Percentual exibido para o cliente nos produtos em promoção.</div>
+        </div>
+      </div>
+      <button class="btn-salvar-g" onclick="salvarGlobais()">💾 Salvar configuração</button>
+    </div>
+
+    <!-- SIMULADOR -->
+    <div style="background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:14px;margin-bottom:14px">
+      <div class="sec-tit" style="margin-bottom:10px">📐 Como os preços são calculados</div>
+      <div style="font-size:12px;color:var(--cinza);line-height:2">
+        <div>📦 <strong style="color:#fff">Linha Felim:</strong> Tabela → −desconto% → ×(1+margem%)</div>
+        <div>🏭 <strong style="color:#fff">Distribuidora:</strong> Tabela → ×(1+margem%) <em style="color:var(--amarelo)">(sem desconto)</em></div>
+        <div>💰 <strong style="color:#fff">Comissão:</strong> % sobre o preço final ao cliente</div>
+        <div>💵 <strong style="color:#fff">Lucro Azul Plin:</strong> Preço final − custo − comissão</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOTOS -->
+  <div class="tab-content" id="tab-fotos">
+    <div class="sec-header"><div class="sec-tit" style="margin:0">📷 Produtos</div><button class="btn-novo" onclick="abrirModalNovoProd()">+ Novo Produto</button></div>
+    <br>
+    <input type="text" class="busca-prod" id="dirFotoBusca" placeholder="Buscar produto pelo nome ou código..." oninput="renderFotosDiretor()">
+    <div id="dirFotoList"></div>
+  </div>
+
+  <!-- EQUIPE -->
+  <div class="tab-content" id="tab-equipe">
+    <div class="sec-header">
+      <div class="sec-tit" style="margin:0">Equipe de vendas</div>
+      <button class="btn-novo" onclick="abrirModalV()">+ Cadastrar</button>
+    </div>
+    <div id="vendedorasList"></div>
+  </div>
+
+  <!-- PEDIDOS -->
+  <div class="tab-content" id="tab-pedidos">
+    <div class="filtros-status">
+      <button class="fsb on" onclick="setFS('todos',this)">Todos</button>
+      <button class="fsb" onclick="setFS('confirmado',this)">✅ Confirmados</button>
+      <button class="fsb" onclick="setFS('orcamento',this)">⏳ Orçamentos</button>
+      <button class="fsb" onclick="setFS('cancelado',this)">✕ Cancelados</button>
+    </div>
+    <div id="pedidosList"></div>
+  </div>
+</div>
+
+<!-- MODAL FOTO -->
+<div class="modal-overlay" id="modalFotoDiretor">
+  <div class="modal-sheet">
+    <div class="ms-handle"></div>
+    <div class="ms-head">
+      <div class="ms-title">Editar foto</div>
+      <button class="btn-fm" onclick="fecharModalFotoDiretor()">Fechar</button>
+    </div>
+    <div class="ms-body">
+      <div class="ms-label">Produto</div>
+      <div style="font-size:13px;color:var(--gold);margin-bottom:14px;font-weight:600" id="dirMsFotoNome"></div>
+      <div class="ms-label">URL da foto</div>
+      <input class="ms-input" id="dirMsFotoUrl" type="url" placeholder="https://felim.gestor909.com.br/fotos/..." oninput="dirPreviewFoto()">
+      <div class="ms-preview" id="dirMsFotoPreview"><span style="font-size:32px;opacity:.3">📷</span></div>
+      <div class="ms-label" style="margin-bottom:8px">💡 Como buscar a foto:</div>
+      <div style="font-size:11px;color:var(--cinza);line-height:1.7;margin-bottom:16px">
+        1. Abra <strong style="color:var(--gold)">felim.gestor909.com.br</strong><br>
+        2. Encontre o produto<br>
+        3. Segure a foto → "Copiar link da imagem"<br>
+        4. Cole aqui acima
+      </div>
+      <button class="btn-sv" onclick="salvarFotoDiretor()" style="background:linear-gradient(135deg,var(--gold),#c8a000);color:#000">💾 Salvar foto</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL VENDEDORA -->
+<div class="modal-overlay" id="modalVendedora">
+  <div class="modal-sheet">
+    <div class="ms-handle"></div>
+    <div class="ms-head"><div class="ms-title">Nova Vendedora</div><button class="btn-fm" onclick="fecharModalV()">Fechar</button></div>
+    <div class="ms-body">
+      <div class="ms-label">Nome completo</div>
+      <input class="ms-input" id="vNome" type="text" placeholder="Nome do vendedor(a)">
+      <div class="ms-label">Telefone</div>
+      <input class="ms-input" id="vTel" type="tel" placeholder="31 9 9999-9999">
+      <div class="ms-label">PIN de acesso (4 a 6 dígitos)</div>
+      <input class="ms-input" id="vPin" type="tel" maxlength="6" placeholder="Ex: 4821" oninput="this.value=this.value.replace(/\D/g,'')">
+      <div class="ms-hint">A vendedora usa este PIN para acessar o painel.</div>
+      <button class="btn-sv" onclick="salvarVendedora()">💾 Salvar vendedor(a)</button>
+    </div>
+  </div>
+</div>
+
+<nav class="nav-bar">
+  <a class="nav-item" href="index.html"><span class="nav-icon">🛍️</span><span class="nav-label">Loja</span></a>
+  <div class="nav-divider"></div>
+  <a class="nav-item" href="2-vendedora-painel.html"><span class="nav-icon">💰</span><span class="nav-label">Vendedor(a)</span></a>
+  <div class="nav-divider"></div>
+  <a class="nav-item active" href="3-diretor-painel.html"><span class="nav-icon">👑</span><span class="nav-label" style="color:var(--gold)">Diretor</span></a>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PIN_DIR='0000';
+const CICLO_DIAS=35;
+const K_VENDEDORAS='azulplin_vendedoras',K_VENDAS='azulplin_vendas',K_CICLO='azulplin_ciclo',K_GLOBAIS='azulplin_globais',K_VISITORS='azulplin_visitors',K_FOTOS='azulplin_fotos';
+
+const TODOS_PRODS=[
+  {cod:"100002",nome:"Água Sanitária Felim"},{cod:"100006",nome:"Amaciante p/ Roupas BB 5L"},{cod:"100007",nome:"Amaciante p/ Roupas BB 20L"},
+  {cod:"100032",nome:"Cera Auto Brilho Incolor BB 5L"},{cod:"100073",nome:"Cera Incolor Felim"},{cod:"100298",nome:"Cera Incolor Promoção"},
+  {cod:"100085",nome:"Cera Pasta Incolor"},{cod:"100313",nome:"Cloro Solução 6% BB 5L"},{cod:"100314",nome:"Cloro Solução 6% BB 20L"},
+  {cod:"100010",nome:"Desengraxante Alcalino BB 5L"},{cod:"100100",nome:"Desinfetante Eucalipto"},{cod:"100108",nome:"Desinfetante Floral"},
+  {cod:"100180",nome:"Desinfetante Lavanda"},{cod:"100104",nome:"Desinfetante Pinho"},{cod:"100112",nome:"Desinfetante Talco"},
+  {cod:"100116",nome:"Detergente Amôniaco BB 5L"},{cod:"100159",nome:"Detergente Coco Líq."},{cod:"100120",nome:"Detergente Limão"},
+  {cod:"100128",nome:"Detergente Neutro"},{cod:"100163",nome:"Lava Roupas Líquido BB 5L"},{cod:"100143",nome:"Limpador Multiuso"},
+  {cod:"100339",nome:"Limpa Vidros"},{cod:"100167",nome:"Pinho Gel"},{cod:"100155",nome:"Removedor Instantâneo"},{cod:"100017",nome:"Restaurador Pretinho"},
+  {cod:"200470",nome:"Ácido Muriático Limpa Pedras"},{cod:"200347",nome:"Álcool Gel 70% Domus 5L"},{cod:"200420",nome:"Álcool Líquido 70% 1L"},
+  {cod:"200306",nome:"Avental Reforçado Napa Verde"},{cod:"200009",nome:"Bota PVC N.36"},{cod:"200050",nome:"Bota PVC N.38"},
+  {cod:"200052",nome:"Bota PVC N.40"},{cod:"200044",nome:"Bota PVC N.41"},{cod:"200070",nome:"Bota PVC N.42"},
+  {cod:"200311",nome:"Luva Látex Amarela Grande"},{cod:"200108",nome:"Luva Látex Preta Grande"},{cod:"200049",nome:"Luva Látex Verde Grande"},
+  {cod:"200330",nome:"Luva Vinil c/Pó CX 100un"},{cod:"200293",nome:"Máscara Cirúrgica Roxa"},
+  {cod:"200245",nome:"Papel Higiênico Alveflor 30m"},{cod:"200430",nome:"Papel Higiênico Delicate Especial"},
+  {cod:"200061",nome:"Papel Rolão 300mx10cm"},{cod:"200204",nome:"Papel Rolão 600mx10cm"},
+  {cod:"200313",nome:"Dispenser Copo Água"},{cod:"200416",nome:"Dispenser Papel Rolão"},{cod:"200418",nome:"Dispenser Sabonete 800ml"},
+  {cod:"200442",nome:"Vassoura Esfregão Distak"},{cod:"200308",nome:"Vassoura Gari PET 40cm"},
+  {cod:"200119",nome:"Vassoura Piassava Felim N.3"},{cod:"200421",nome:"Rodo Mágico 27cm"},{cod:"200183",nome:"Rodo Metal 40cm"},
+  {cod:"200225",nome:"Rodo Plástico 30cm"},{cod:"200145",nome:"Pano Multiuso 5un"},{cod:"200217",nome:"Pano Mágico Microfibra"},
+  {cod:"200063",nome:"Esponja Dupla Face 3M"},{cod:"200139",nome:"Saco Lixo Preto 20L"},{cod:"200087",nome:"Saco Lixo Preto 40L"},
+  {cod:"200088",nome:"Saco Lixo Preto 60L"},{cod:"200357",nome:"Saco Lixo 110L Tradicional"},
+  {cod:"200152",nome:"Lixeira 15L Tubular Preta"},{cod:"200431",nome:"Lixeira 240L c/Rodas"},
+  {cod:"200314",nome:"Sabonete Gel Natural 5L"},{cod:"200341",nome:"Detergente Clorado Crystal Clor"},
+  {cod:"200258",nome:"Disco Limpeza Verde 350mm"},{cod:"200262",nome:"Disco Polimento Bege 410mm"},
+  {cod:"200015",nome:"Copo Descartável 200ml"},{cod:"200133",nome:"Copo Descartável 50ml"},
+  {cod:"200285",nome:"Touca Descartável TNT"},{cod:"200004",nome:"Balde Plástico Preto 12L"},
+  {cod:"200177",nome:"Pulverizador 500ml"},{cod:"200100",nome:"Tapete Sanitário 100x70cm"},
+];
+
+// Firebase sync
+const _cache = {};
+function get(k){return _cache[k]||[]}
+function geto(k,d={}){return _cache[k]!=null?_cache[k]:d}
+async function save(k,v){
+  _cache[k]=v;localStorage.setItem(k,JSON.stringify(v));
+  if(window.firebaseReady)await window.fbSet('azulplin/'+k,v);
+}
+async function syncAll(cb){
+  const keys=['azulplin_vendas','azulplin_vendedoras','azulplin_ciclo','azulplin_globais','azulplin_fotos'];
+  for(const k of keys){
+    try{
+      const val=await window.fbGet('azulplin/'+k);
+      if(val!=null){_cache[k]=val;localStorage.setItem(k,JSON.stringify(val));}
+      else{const local=localStorage.getItem(k);if(local){_cache[k]=JSON.parse(local);await window.fbSet('azulplin/'+k,_cache[k]);}}
+    }catch(e){}
+  }
+  if(cb)cb();
+  renderAll&&renderAll();
+}
+['azulplin_vendas','azulplin_vendedoras','azulplin_ciclo','azulplin_globais','azulplin_fotos'].forEach(k=>{
+  try{const v=localStorage.getItem(k);if(v)_cache[k]=JSON.parse(v);}catch{}
+});
+window.addEventListener('firebaseReady',()=>syncAll(()=>renderAll&&renderAll()));
+function fmtBRL(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function fmtD(iso){return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'})}
+function fmtDH(iso){return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function getG(){return geto(K_GLOBAIS,{desconto:25,margem:37,comissao:6,descProm:10})}
+function getFotos(){return geto(K_FOTOS,{})}
+function getFoto(cod){return getFotos()[cod]||null}
+
+let filtroStatus='todos',editandoCod=null;
+
+function login(){
+  const pin=document.getElementById('pinInput').value.trim();
+  if(pin!==PIN_DIR){document.getElementById('loginErro').classList.add('show');return}
+  document.getElementById('loginErro').classList.remove('show');
+  document.getElementById('loginScreen').classList.add('hide');
+  document.getElementById('app').classList.add('show');
+  syncAll(()=>{carregarGlobais();renderAll();});
+}
+document.getElementById('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+function sair(){document.getElementById('pinInput').value='';document.getElementById('loginScreen').classList.remove('hide');document.getElementById('app').classList.remove('show')}
+
+function setTab(id,btn){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');document.getElementById('tab-'+id).classList.add('on');
+  if(id==='fotos')renderFotosDiretor();else renderAll();
+}
+function setFS(s,btn){filtroStatus=s;document.querySelectorAll('.fsb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderPedidos()}
+
+function renderAll(){
+  document.getElementById('hdrSub').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  renderVisao();renderVendedoras();renderPedidos();
+}
+
+function renderVisao(){
+  let ciclo=geto(K_CICLO,null);if(!ciclo||!ciclo.inicio)ciclo={inicio:new Date().toISOString(),numero:1};
+  const inicio=new Date(ciclo.inicio);
+  const fim=new Date(inicio.getTime()+CICLO_DIAS*24*60*60*1000);
+  const agora=new Date();
+  const diasP=Math.floor((agora-inicio)/(24*60*60*1000));
+  const diasR=Math.max(0,CICLO_DIAS-diasP);
+  const prog=Math.min(100,Math.round((diasP/CICLO_DIAS)*100));
+  document.getElementById('ccVal').textContent=diasR===0?`🎉 Pronto para abrir!`:`${diasR} dias restantes · Ciclo #${ciclo.numero||1}`;
+  document.getElementById('ccBar').style.width=prog+'%';
+  document.getElementById('ccInicio').textContent='Início: '+fmtD(ciclo.inicio);
+  document.getElementById('ccFim').textContent='Abertura: '+fmtD(fim.toISOString());
+  const btn=document.getElementById('btnAbrir');
+  if(diasR>0){btn.className='btn-abrir off';btn.textContent=`🔒 Abre em ${diasR} dias`}
+  else{btn.className='btn-abrir';btn.textContent='🔓 Abrir caixa e iniciar novo ciclo'}
+  const vs=geto(K_VISITORS,{});const ativos=Object.keys(vs).filter(id=>Date.now()-vs[id]<120000).length;
+  const vendas=get(K_VENDAS).filter(v=>new Date(v.data)>=inicio);
+  const conf=vendas.filter(v=>v.status==='confirmado');
+  const orcs=vendas.filter(v=>v.status==='orcamento');
+  const totVend=conf.reduce((s,v)=>s+v.total,0);
+  const totCom=conf.reduce((s,v)=>s+v.comissao,0);
+  const totLucro=conf.reduce((s,v)=>s+(v.lucro||0),0);
+  document.getElementById('lucroVal').textContent=fmtBRL(totLucro);
+  document.getElementById('lucroSub').textContent=`${conf.length} venda${conf.length!==1?'s':''} · Comissões: ${fmtBRL(totCom)} · 👁️ ${ativos} online`;
+  document.getElementById('gVendido').textContent=fmtBRL(totVend).replace('R$\u00a0','R$');
+  document.getElementById('gPedidos').textContent=conf.length;
+  document.getElementById('gOrc').textContent=orcs.length;
+  document.getElementById('gComis').textContent=fmtBRL(totCom).replace('R$\u00a0','R$');
+  const vendedoras=get(K_VENDEDORAS);
+  const medals=['🥇','🥈','🥉'];
+  const ranking=vendedoras.map(v=>{const mv=conf.filter(vd=>vd.vendedoraPin===v.pin);return{...v,n:mv.length,com:mv.reduce((s,vd)=>s+vd.comissao,0),tot:mv.reduce((s,vd)=>s+vd.total,0)}}).sort((a,b)=>b.com-a.com);
+  document.getElementById('rankingList').innerHTML=ranking.length?ranking.map((v,i)=>`
+    <div class="rank-card">
+      <span class="rank-medal">${medals[i]||'·'}</span>
+      <div class="rank-info"><div class="rank-nome">${v.nome}</div><div class="rank-det">${v.n} venda${v.n!==1?'s':''} · ${fmtBRL(v.tot)}</div></div>
+      <div><div class="rank-val">${fmtBRL(v.com)}</div><div class="rank-lbl">comissão</div></div>
+    </div>`).join(''):`<div class="empty"><div class="ei">📊</div><p>Nenhuma venda ainda.</p></div>`;
+}
+
+function abrirCaixa(){
+  let ciclo=geto(K_CICLO,null);if(!ciclo)ciclo={inicio:new Date().toISOString(),numero:1};
+  const fim=new Date(new Date(ciclo.inicio).getTime()+CICLO_DIAS*24*60*60*1000);
+  if(new Date()<fim&&!confirm('O ciclo ainda não terminou. Abrir mesmo assim?'))return;
+  if(!confirm('Confirmar abertura do caixa e início de novo ciclo?'))return;
+  save(K_CICLO,{inicio:new Date().toISOString(),numero:(ciclo.numero||1)+1});
+  showToast('✅ Caixa aberto! Novo ciclo iniciado.');renderAll();
+}
+
+function carregarGlobais(){
+  const g=getG();
+  document.getElementById('gDesc').value=g.desconto;
+  document.getElementById('gMarg').value=g.margem;
+  document.getElementById('gComissao').value=g.comissao;
+  document.getElementById('gDescProm').value=g.descProm;
+}
+
+function salvarGlobais(){
+  const g={
+    desconto:parseFloat(document.getElementById('gDesc').value)||25,
+    margem:parseFloat(document.getElementById('gMarg').value)||37,
+    comissao:parseFloat(document.getElementById('gComissao').value)||6,
+    descProm:parseFloat(document.getElementById('gDescProm').value)||10,
+  };
+  save(K_GLOBAIS,g);showToast('✅ Configuração salva! Loja atualizada.');
+}
+
+// FOTOS
+function renderFotosDiretor(){
+  const q=(document.getElementById('dirFotoBusca')?.value||'').trim().toUpperCase();
+  const fotos=getFotos();
+  const custom=getProdsCustom();
+  const customList=Object.values(custom);
+  const todosProds=[...TODOS_PRODS,...customList.map(p=>({cod:p.cod,nome:p.nome,isCustom:true}))];
+  const prods=todosProds.filter(p=>!q||p.nome.toUpperCase().includes(q)||p.cod.includes(q));
+  const imgErr=`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2256%22 height=%2256%22><rect fill=%22%23121a2e%22 width=%22100%25%22 height=%22100%25%22/><text y=%2250%25%22 x=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2224%22>📷</text></svg>`;
+  document.getElementById('dirFotoList').innerHTML=prods.map(p=>{
+    const fotoUrl=fotos[p.cod]||'';
+    const isC=p.isCustom;
+    return`<div class="prod-foto-card" style="${isC?'border-color:rgba(244,196,48,.3)':''}">
+      <img class="pf-img" src="${fotoUrl||imgErr}" onerror="this.src='${imgErr}'" alt="${p.nome}">
+      <div class="pf-info">
+        <div class="pf-nome">${p.nome}${isC?' <span style="font-size:9px;background:rgba(244,196,48,.15);color:var(--gold);padding:1px 5px;border-radius:4px;font-weight:700">CUSTOM</span>':''}</div>
+        <div class="pf-cod">${p.cod} · ${fotoUrl?'✓ com foto':'sem foto'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">
+        <button class="btn-ef" onclick="abrirModalFotoDiretor('${p.cod}','${p.nome.replace(/'/g,"\'")}')">✏️</button>
+        ${isC?`<button class="btn-ef" style="background:rgba(239,71,111,.1);border-color:rgba(239,71,111,.3);color:var(--vermelho)" onclick="deletarProdCustom('${p.cod}')">🗑️</button>`:''}
+      </div>
+    </div>`;
+  }).join('')||`<div class="empty"><div class="ei">🔍</div><p>Nenhum produto encontrado.</p></div>`;
+}
+
+function abrirModalFotoDiretor(cod,nome){
+  editandoCod=cod;
+  document.getElementById('dirMsFotoNome').textContent=nome;
+  const fotoAtual=getFoto(cod)||'';
+  document.getElementById('dirMsFotoUrl').value=fotoAtual;
+  dirPreviewFoto();
+  document.getElementById('modalFotoDiretor').classList.add('open');
+}
+
+function dirPreviewFoto(){
+  const url=document.getElementById('dirMsFotoUrl').value.trim();
+  const prev=document.getElementById('dirMsFotoPreview');
+  if(url){prev.innerHTML=`<img src="${url}" onerror="this.parentElement.innerHTML='<span style=font-size:32px;opacity:.3>❌</span>'" style="max-width:100%;max-height:100%;object-fit:contain;padding:10px">`}
+  else{prev.innerHTML='<span style="font-size:32px;opacity:.3">📷</span>'}
+}
+
+function salvarFotoDiretor(){
+  if(!editandoCod)return;
+  const url=document.getElementById('dirMsFotoUrl').value.trim();
+  const fotos=getFotos();
+  if(url)fotos[editandoCod]=url;else delete fotos[editandoCod];
+  save(K_FOTOS,fotos);fecharModalFotoDiretor();renderFotosDiretor();showToast('✅ Foto salva!');
+}
+
+function fecharModalFotoDiretor(){document.getElementById('modalFotoDiretor').classList.remove('open');editandoCod=null}
+
+// VENDEDORAS
+function renderVendedoras(){
+  const vendedoras=get(K_VENDEDORAS);
+  let ciclo=geto(K_CICLO,null);if(!ciclo)ciclo={inicio:new Date().toISOString()};
+  const inicio=new Date(ciclo.inicio);
+  const conf=get(K_VENDAS).filter(v=>v.status==='confirmado'&&new Date(v.data)>=inicio);
+  document.getElementById('vendedorasList').innerHTML=vendedoras.length?vendedoras.map(v=>{
+    const mv=conf.filter(vd=>vd.vendedoraPin===v.pin);
+    const com=mv.reduce((s,vd)=>s+vd.comissao,0);
+    const tot=mv.reduce((s,vd)=>s+vd.total,0);
+    return`<div class="v-card">
+      <div class="vc2-top">
+        <div class="vc2-info">
+          <div class="vc2-av">${v.nome.charAt(0).toUpperCase()}</div>
+          <div><div class="vc2-nome">${v.nome}</div><div class="vc2-pin">PIN: ${v.pin} · ${v.tel||'sem tel'}</div></div>
+        </div>
+        <button class="btn-del" onclick="deletarV('${v.pin}')">✕</button>
+      </div>
+      <div class="vc2-stats">
+        <div class="vc2-stat"><div class="vc2-sl">Vendas</div><div class="vc2-sv">${mv.length}</div></div>
+        <div class="vc2-stat"><div class="vc2-sl">Total</div><div class="vc2-sv" style="font-size:11px">${fmtBRL(tot).replace('R$\u00a0','R$')}</div></div>
+        <div class="vc2-stat"><div class="vc2-sl">Comissão</div><div class="vc2-sv g" style="font-size:11px">${fmtBRL(com).replace('R$\u00a0','R$')}</div></div>
+      </div>
+    </div>`;
+  }).join(''):`<div class="empty"><div class="ei">👥</div><p>Nenhum vendedor(a) cadastrado.</p></div>`;
+}
+
+function deletarV(pin){if(!confirm('Remover este vendedor(a)?'))return;save(K_VENDEDORAS,get(K_VENDEDORAS).filter(v=>v.pin!==pin));renderAll();showToast('Removido.')}
+
+function renderPedidos(){
+  let vendas=[...get(K_VENDAS)].reverse();
+  const vendedoras=get(K_VENDEDORAS);
+  if(filtroStatus!=='todos')vendas=vendas.filter(v=>v.status===filtroStatus);
+  document.getElementById('pedidosList').innerHTML=vendas.length?vendas.map(v=>{
+    const vend=vendedoras.find(x=>x.pin===v.vendedoraPin);
+    const st=v.status==='confirmado'?'<span class="ptag ptc">✅ Confirmado</span>':v.status==='orcamento'?'<span class="ptag pto">⏳ Orçamento</span>':'<span class="ptag ptd">✕ Cancelado</span>';
+    return`<div class="ped-card">
+      <div class="pc-top"><div class="pc-cli">${v.cliente?.nome||'Cliente'}</div><div class="pc-tot">${fmtBRL(v.total)}</div></div>
+      <div class="pc-tags">
+        ${st}<span class="ptag ptd">📅 ${fmtDH(v.data)}</span>
+        ${vend?`<span class="ptag ptv">👤 ${vend.nome}</span>`:''}
+        ${v.status==='confirmado'?`<span class="ptag ptc">+${fmtBRL(v.comissao)}</span><span class="ptag ptl">💰 ${fmtBRL(v.lucro||0)}</span>`:''}
+      </div>
+    </div>`;
+  }).join(''):`<div class="empty"><div class="ei">📦</div><p>Nenhum pedido encontrado.</p></div>`;
+}
+
+function abrirModalV(){['vNome','vTel','vPin'].forEach(id=>document.getElementById(id).value='');document.getElementById('modalVendedora').classList.add('open')}
+function fecharModalV(){document.getElementById('modalVendedora').classList.remove('open')}
+
+function salvarVendedora(){
+  const nome=document.getElementById('vNome').value.trim();
+  const tel=document.getElementById('vTel').value.trim();
+  const pin=document.getElementById('vPin').value.trim();
+  if(!nome){showToast('Informe o nome');return}
+  if(!pin||pin.length<4){showToast('PIN mínimo 4 dígitos');return}
+  const arr=get(K_VENDEDORAS);
+  if(arr.find(v=>v.pin===pin)){showToast('Este PIN já existe!');return}
+  arr.push({nome,tel,pin,cadastro:new Date().toISOString()});
+  save(K_VENDEDORAS,arr);fecharModalV();renderAll();showToast(`✅ ${nome} cadastrado(a)!`);
+}
+
+
+// PRODUTOS CUSTOMIZADOS
+const K_PRODS_CUSTOM = 'azulplin_prods_custom';
+function getProdsCustom(){return geto(K_PRODS_CUSTOM,{});}
+
+function abrirModalNovoProd(cod=null){
+  const custom = getProdsCustom();
+  const p = cod ? custom[cod] : null;
+  document.getElementById('novoProdTitle').textContent = cod ? 'Editar Produto' : 'Novo Produto';
+  document.getElementById('npCod').value = cod || '';
+  document.getElementById('npCod').readOnly = !!cod;
+  document.getElementById('npNome').value = p?.nome || '';
+  document.getElementById('npCat').value = p?.cat || '';
+  document.getElementById('npEmb').value = p?.emb || '';
+  document.getElementById('npPreco').value = p?.pb || '';
+  document.getElementById('npLinha').value = p?.linha || 'felim';
+  document.getElementById('npProm').value = p?.prom ? 'true' : 'false';
+  document.getElementById('npDesc').value = p?.desc || '';
+  document.getElementById('npFoto').value = p?.foto || '';
+  npPreviewFoto();
+  document.getElementById('modalNovoProd').classList.add('open');
+}
+
+function fecharModalNovoProd(){document.getElementById('modalNovoProd').classList.remove('open')}
+
+function npPreviewFoto(){
+  const url = document.getElementById('npFoto').value.trim();
+  const prev = document.getElementById('npFotoPreview');
+  if(url){prev.innerHTML=`<img src="${url}" onerror="this.parentElement.innerHTML='<span style=font-size:32px;opacity:.3>❌</span>'" style="max-width:100%;max-height:100%;object-fit:contain;padding:10px">`}
+  else{prev.innerHTML='<span style="font-size:32px;opacity:.3">📷</span>'}
+}
+
+async function salvarNovoProd(){
+  const cod = document.getElementById('npCod').value.trim();
+  const nome = document.getElementById('npNome').value.trim();
+  const cat = document.getElementById('npCat').value.trim();
+  const emb = document.getElementById('npEmb').value.trim();
+  const pb = parseFloat(document.getElementById('npPreco').value) || 0;
+  const linha = document.getElementById('npLinha').value;
+  const prom = document.getElementById('npProm').value === 'true';
+  const desc = document.getElementById('npDesc').value.trim();
+  const foto = document.getElementById('npFoto').value.trim();
+  if(!cod){showToast('Informe o código');return}
+  if(!nome){showToast('Informe o nome');return}
+  if(!pb){showToast('Informe o preço');return}
+  const custom = getProdsCustom();
+  custom[cod] = {cod,nome,cat,emb,pb,linha,prom,desc,foto,adicionadoEm:new Date().toISOString()};
+  await save(K_PRODS_CUSTOM, custom);
+  fecharModalNovoProd();
+  renderFotosDiretor();
+  showToast('✅ Produto salvo!');
+}
+
+async function deletarProdCustom(cod){
+  if(!confirm('Excluir este produto?'))return;
+  const custom = getProdsCustom();
+  delete custom[cod];
+  await save(K_PRODS_CUSTOM, custom);
+  renderFotosDiretor();
+  showToast('Produto excluído.');
+}
+
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+setInterval(renderAll,30000);
+</script>
+
+<!-- MODAL NOVO PRODUTO -->
+<div class="modal-overlay" id="modalNovoProd">
+  <div class="modal-sheet">
+    <div class="ms-handle"></div>
+    <div class="ms-head">
+      <div class="ms-title" id="novoProdTitle">Novo Produto</div>
+      <button class="btn-fm" onclick="fecharModalNovoProd()">Fechar</button>
+    </div>
+    <div class="ms-body">
+      <div class="ms-label">Código</div>
+      <input class="ms-input" id="npCod" type="text" placeholder="Ex: 100999">
+      <div class="ms-label">Nome</div>
+      <input class="ms-input" id="npNome" type="text" placeholder="Nome do produto">
+      <div class="ms-label">Categoria</div>
+      <input class="ms-input" id="npCat" type="text" placeholder="Ex: Detergente">
+      <div class="ms-label">Embalagem</div>
+      <input class="ms-input" id="npEmb" type="text" placeholder="Ex: BB 5L">
+      <div class="ms-label">Preço tabela (R$)</div>
+      <input class="ms-input" id="npPreco" type="number" step="0.01" min="0" placeholder="0,00">
+      <div class="ms-label">Linha</div>
+      <select class="ms-input" id="npLinha" style="-webkit-appearance:none">
+        <option value="felim">Felim (com desconto 25%)</option>
+        <option value="distrib">Distribuidora (sem desconto)</option>
+      </select>
+      <div class="ms-label">Promoção?</div>
+      <select class="ms-input" id="npProm" style="-webkit-appearance:none">
+        <option value="false">Não</option>
+        <option value="true">Sim — preço tabela é o preço final</option>
+      </select>
+      <div class="ms-label">Descrição</div>
+      <textarea class="ms-input" id="npDesc" rows="3" placeholder="Descrição do produto..." style="resize:none"></textarea>
+      <div class="ms-label">URL da foto</div>
+      <input class="ms-input" id="npFoto" type="url" placeholder="https://felim.gestor909.com.br/fotos/..." oninput="npPreviewFoto()">
+      <div class="ms-preview" id="npFotoPreview"><span style="font-size:32px;opacity:.3">📷</span></div>
+      <button class="btn-sv" onclick="salvarNovoProd()" style="background:linear-gradient(135deg,var(--gold),#c8a000);color:#000">💾 Salvar produto</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

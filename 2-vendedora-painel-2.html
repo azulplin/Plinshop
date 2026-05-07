@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0057B8">
+<title>Azul Plin · Vendedor(a)</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#0057B8;--azul2:#0078E7;--verde:#00A651;--verde2:#00C060;--amarelo:#F4C430;--vermelho:#EF476F;--pendente:#F4A261;--bg:#0a1628;--s1:#0e1e35;--s2:#152540;--branco:#e8f4ff;--cinza:#5a7a9a;--border:rgba(0,120,231,.15);--border2:rgba(255,255,255,.07);--font:'Exo 2',sans-serif;--mono:'DM Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--bg);color:var(--branco);min-height:100dvh;max-width:480px;margin:0 auto;padding-bottom:80px}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(0,87,184,.12),transparent 55%);pointer-events:none;z-index:0}
+
+.nav-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:200;background:#0e1e35;border-top:1px solid rgba(0,120,231,.2);display:flex;align-items:center;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;flex:1;padding:4px 0}
+.nav-icon{font-size:20px}.nav-label{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#5a7a9a}
+.nav-item.active .nav-label{color:#0078E7}
+.nav-divider{width:1px;height:30px;background:rgba(255,255,255,.08)}
+
+.login-screen{position:fixed;inset:0;background:var(--bg);z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center}
+.login-screen.hide{display:none}
+.login-logo{margin-bottom:18px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.login-title{font-size:24px;font-weight:900;color:#fff;margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--cinza);margin-bottom:20px;line-height:1.6}
+.login-card{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:340px}
+.l-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--cinza);margin-bottom:8px;text-align:left}
+.l-input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:12px;padding:14px 16px;color:var(--branco);font-family:var(--mono);font-size:22px;letter-spacing:.25em;text-align:center;outline:none;margin-bottom:14px;transition:border-color .2s}
+.l-input:focus{border-color:var(--azul2)}
+.btn-entrar{width:100%;background:linear-gradient(135deg,var(--azul),var(--azul2));border:none;border-radius:12px;padding:15px;color:#fff;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer}
+.btn-entrar:active{transform:scale(.97)}
+.l-erro{color:var(--vermelho);font-size:12px;margin-top:8px;display:none}.l-erro.show{display:block}
+
+.app{display:none;position:relative;z-index:1}.app.show{display:block}
+.hdr{padding:16px 18px 0;background:var(--s1);border-bottom:1px solid var(--border2)}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.hdr-logo{display:flex;align-items:center;gap:8px}
+.hdr-marca{line-height:1}
+.hdr-azul{font-size:13px;font-weight:900;color:#fff;letter-spacing:.06em}
+.hdr-plin{font-size:13px;font-weight:900;color:var(--verde2);letter-spacing:.06em}
+.btn-sair{background:transparent;border:1px solid var(--border2);border-radius:8px;padding:5px 11px;color:var(--cinza);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.hdr-name{font-size:20px;font-weight:800;color:#fff;margin-bottom:2px}
+.hdr-sub{font-size:11px;color:var(--cinza);padding-bottom:14px}
+
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--border2);position:sticky;top:0;z-index:40}
+.tab{flex:1;padding:12px 6px;text-align:center;font-size:11px;font-weight:700;color:var(--cinza);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;position:relative}
+.tab.on{color:var(--azul2);border-bottom-color:var(--azul2)}
+.tab-badge{position:absolute;top:6px;right:8px;background:var(--pendente);color:#000;font-size:9px;font-weight:900;padding:1px 5px;border-radius:99px}
+.tab-content{display:none;padding:14px}.tab-content.on{display:block;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.caixa-hero{background:linear-gradient(135deg,var(--azul),var(--azul2));border:1px solid rgba(0,120,231,.4);border-radius:22px;padding:20px;margin-bottom:12px;position:relative;overflow:hidden}
+.ch-glow{position:absolute;top:-30px;right:-30px;width:140px;height:140px;background:radial-gradient(circle,rgba(255,255,255,.1),transparent 70%);pointer-events:none}
+.ch-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.55);margin-bottom:7px}
+.ch-valor{font-family:var(--mono);font-size:36px;font-weight:500;color:#fff;line-height:1;margin-bottom:4px}
+.ch-valor span{font-size:18px;opacity:.6}
+.ch-sub{font-size:11px;color:rgba(255,255,255,.6);margin-top:4px}
+.cd-wrap{margin-top:14px}
+.cd-top{display:flex;justify-content:space-between;margin-bottom:6px}
+.cd-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4)}
+.cd-dias{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--amarelo)}
+.cd-bg{height:6px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden}
+.cd-fill{height:100%;background:linear-gradient(90deg,var(--verde2),#00e5a0);border-radius:99px;transition:width .8s ease}
+.cd-data{font-size:10px;color:rgba(255,255,255,.35);margin-top:5px;text-align:right}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sc{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:13px 15px}
+.sc-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--cinza);margin-bottom:4px}
+.sc-val{font-family:var(--mono);font-size:22px;font-weight:700;color:#fff}
+.sc-val.g{color:var(--verde2)}.sc-val.y{color:var(--amarelo)}.sc-val.o{color:var(--pendente)}
+.sc-sub{font-size:10px;color:var(--cinza);margin-top:2px}
+.motiv{background:var(--s1);border:1px solid var(--border2);border-radius:14px;padding:14px;margin-bottom:12px}
+.motiv-txt{font-size:14px;font-weight:800;color:var(--azul2);line-height:1.4}
+.motiv-sub{font-size:11px;color:var(--cinza);margin-top:4px}
+.sec-tit{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--cinza);margin-bottom:10px}
+
+.orc-card{background:var(--s1);border:1.5px solid rgba(244,162,97,.25);border-radius:16px;margin-bottom:10px;overflow:hidden}
+.orc-head{display:flex;justify-content:space-between;align-items:flex-start;padding:13px 15px 9px}
+.orc-cliente{font-size:14px;font-weight:700;color:#fff}
+.orc-valor{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--pendente)}
+.orc-tags{display:flex;gap:5px;flex-wrap:wrap;padding:0 15px 9px}
+.tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:5px}
+.tag-data{background:rgba(255,255,255,.05);color:var(--cinza);border:1px solid var(--border2)}
+.tag-pend{background:rgba(244,162,97,.1);color:var(--pendente);border:1px solid rgba(244,162,97,.22)}
+.tag-itens{background:rgba(0,120,231,.1);color:#7fbaff;border:1px solid rgba(0,120,231,.2)}
+.tag-comis{background:rgba(0,192,96,.1);color:var(--verde2);border:1px solid rgba(0,192,96,.2)}
+.orc-actions{border-top:1px solid var(--border2);display:flex}
+.btn-ver{flex:1;background:transparent;border:none;border-right:1px solid var(--border2);padding:11px;color:var(--cinza);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer}
+.btn-conf{flex:1.5;background:var(--verde);border:none;padding:11px;color:#fff;font-family:var(--font);font-size:12px;font-weight:800;cursor:pointer}
+.btn-conf:active{opacity:.85}
+.btn-canc{flex:1;background:transparent;border:none;border-left:1px solid var(--border2);padding:11px;color:var(--vermelho);font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer}
+.orc-itens{display:none;padding:0 15px 11px;border-top:1px solid var(--border2)}
+.orc-itens.show{display:block}
+.orc-item-row{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-bottom:1px solid var(--border2)}
+.orc-item-row:last-child{border-bottom:none}
+.oir-nome{color:var(--cinza);flex:1}.oir-val{font-family:var(--mono);color:#fff;font-weight:600}
+
+.venda-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;margin-bottom:10px;padding:13px 15px}
+.vc-top{display:flex;justify-content:space-between;margin-bottom:7px}
+.vc-cliente{font-size:14px;font-weight:700;color:#fff}
+.vc-valor{font-family:var(--mono);font-size:14px;font-weight:700;color:var(--azul2)}
+.vc-tags{display:flex;gap:5px;flex-wrap:wrap}
+
+/* FOTOS */
+.foto-card{background:var(--s1);border:1px solid var(--border2);border-radius:14px;margin-bottom:10px;overflow:hidden;display:flex;align-items:center;gap:12px;padding:10px 14px}
+.foto-img{width:56px;height:56px;border-radius:10px;object-fit:contain;background:rgba(255,255,255,.05);padding:4px;flex-shrink:0;border:1px solid var(--border2)}
+.foto-info{flex:1;min-width:0}
+.foto-nome{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.foto-cod{font-family:var(--mono);font-size:10px;color:var(--cinza);margin-top:2px}
+.btn-editar-foto{background:rgba(0,120,231,.15);border:1px solid rgba(0,120,231,.3);border-radius:8px;padding:6px 12px;color:var(--azul2);font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.foto-busca{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;color:var(--branco);font-family:var(--font);font-size:13px;outline:none;margin-bottom:10px}
+.foto-busca:focus{border-color:var(--azul2)}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;backdrop-filter:blur(8px);align-items:flex-end}
+.modal-overlay.open{display:flex}
+.modal-sheet{background:var(--s1);border:1px solid var(--border);border-radius:22px 22px 0 0;width:100%;max-height:85dvh;display:flex;flex-direction:column;animation:upSlide .3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes upSlide{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ms-handle{width:36px;height:4px;background:var(--border2);border-radius:99px;margin:12px auto}
+.ms-head{padding:0 18px 14px;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.ms-title{font-size:16px;font-weight:800;color:#fff}
+.btn-fm{background:var(--s2);border:1px solid var(--border2);border-radius:8px;padding:5px 12px;color:var(--cinza);font-size:11px;cursor:pointer;font-family:var(--font)}
+.ms-body{padding:18px;overflow-y:auto;flex:1}
+.ms-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--cinza);margin:0 0 6px}
+.ms-input{width:100%;background:var(--s2);border:1px solid var(--border2);border-radius:10px;padding:11px 13px;color:var(--branco);font-family:var(--font);font-size:13px;outline:none;margin-bottom:12px;transition:border-color .2s}
+.ms-input:focus{border-color:var(--azul2)}
+.ms-preview{width:100%;height:160px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;margin-bottom:12px;overflow:hidden}
+.ms-preview img{max-width:100%;max-height:100%;object-fit:contain;padding:10px}
+.btn-salvar-foto{width:100%;background:linear-gradient(135deg,var(--azul),var(--azul2));border:none;border-radius:12px;padding:13px;color:#fff;font-family:var(--font);font-size:14px;font-weight:800;cursor:pointer}
+
+.modal-conf{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:300;backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px}
+.modal-conf.open{display:flex}
+.mc-box{background:var(--s1);border:1px solid var(--border);border-radius:20px;padding:24px;width:100%;max-width:360px;text-align:center;animation:pop .3s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.mc-ico{font-size:48px;margin-bottom:12px}
+.mc-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:8px}
+.mc-sub{font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:14px}
+.mc-val{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--verde2);margin-bottom:4px}
+.mc-comis{font-size:12px;color:#7fbaff;margin-bottom:20px}
+.mc-btns{display:flex;gap:10px}
+.btn-sim{flex:1;background:var(--verde);border:none;border-radius:12px;padding:14px;color:#fff;font-family:var(--font);font-size:14px;font-weight:800;cursor:pointer}
+.btn-nao{flex:1;background:transparent;border:1px solid var(--border2);border-radius:12px;padding:14px;color:var(--cinza);font-family:var(--font);font-size:14px;font-weight:600;cursor:pointer}
+
+.empty{text-align:center;padding:40px 20px;color:var(--cinza)}.empty .ei{font-size:36px;margin-bottom:10px;opacity:.5}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--verde);color:#fff;padding:10px 20px;border-radius:99px;font-size:12px;font-weight:700;z-index:500;opacity:0;transition:all .25s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAIYIqc9ie9yiHmR3wsmzXIPz32Ilk50Ww",
+  authDomain: "azul-plin-shop.firebaseapp.com",
+  projectId: "azul-plin-shop",
+  storageBucket: "azul-plin-shop.firebasestorage.app",
+  messagingSenderId: "1066498043732",
+  appId: "1:1066498043732:web:3c622747dff78e2799a2c1"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+window.fbGet = async (path) => { const snap = await get(ref(db, path)); return snap.exists() ? snap.val() : null; };
+window.fbSet = async (path, val) => { await set(ref(db, path), val); };
+window.fbListen = (path, cb) => { onValue(ref(db, path), snap => cb(snap.exists() ? snap.val() : null)); };
+window.firebaseReady = true;
+window.dispatchEvent(new Event('firebaseReady'));
+</script>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-logo">
+    <svg width="70" height="84" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0096FF"/><stop offset="100%" style="stop-color:#0057B8"/></linearGradient>
+        <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00C060"/><stop offset="100%" style="stop-color:#0096FF"/></linearGradient>
+      </defs>
+      <path d="M50 5 C50 5 10 55 10 78 C10 101 28 115 50 115 C72 115 90 101 90 78 C90 55 50 5 50 5Z" fill="url(#g1)"/>
+      <path d="M15 82 Q30 68 50 78 Q70 88 85 74 L85 95 Q72 110 50 112 Q28 113 15 98Z" fill="url(#g2)" opacity=".9"/>
+      <ellipse cx="35" cy="50" rx="8" ry="14" fill="white" opacity=".22" transform="rotate(-15,35,50)"/>
+    </svg>
+  </div>
+  <div class="login-title">Área do Vendedor(a)</div>
+  <div class="login-sub">Azul Plin Soluções<br>Digite seu PIN para entrar</div>
+  <div class="login-card">
+    <div class="l-label">Seu PIN (4 a 6 dígitos)</div>
+    <input class="l-input" id="pinInput" type="tel" maxlength="6" placeholder="••••••" oninput="this.value=this.value.replace(/\D/g,'')">
+    <button class="btn-entrar" onclick="fazerLogin()">Entrar →</button>
+    <div class="l-erro" id="loginErro">PIN incorreto. Verifique com o Diretor.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <div class="hdr">
+    <div class="hdr-top">
+      <div class="hdr-logo">
+        <svg width="26" height="32" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="gh1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0096FF"/><stop offset="100%" style="stop-color:#0057B8"/></linearGradient><linearGradient id="gh2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00C060"/><stop offset="100%" style="stop-color:#0096FF"/></linearGradient></defs>
+          <path d="M50 5 C50 5 10 55 10 78 C10 101 28 115 50 115 C72 115 90 101 90 78 C90 55 50 5 50 5Z" fill="url(#gh1)"/>
+          <path d="M15 82 Q30 68 50 78 Q70 88 85 74 L85 95 Q72 110 50 112 Q28 113 15 98Z" fill="url(#gh2)" opacity=".9"/>
+        </svg>
+        <div class="hdr-marca"><div class="hdr-azul">AZUL</div><div class="hdr-plin">PLIN</div></div>
+      </div>
+      <button class="btn-sair" onclick="sair()">Sair</button>
+    </div>
+    <div class="hdr-name" id="appNome">Olá! 👋</div>
+    <div class="hdr-sub" id="appSub">Vendedor(a) Azul Plin</div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="setTab('caixa',this)">💰 Caixa</div>
+    <div class="tab" onclick="setTab('orcamentos',this)">⏳ Orçamentos<span class="tab-badge" id="orcBadge" style="display:none">0</span></div>
+    <div class="tab" onclick="setTab('historico',this)">📋 Histórico</div>
+    <div class="tab" onclick="setTab('fotos',this)">📷 Fotos</div>
+  </div>
+
+  <!-- CAIXA -->
+  <div class="tab-content on" id="tab-caixa">
+    <div class="caixa-hero">
+      <div class="ch-glow"></div>
+      <div class="ch-label">💰 Seu caixa — vendas confirmadas</div>
+      <div class="ch-valor" id="heroValor">R$ <span>0,00</span></div>
+      <div class="ch-sub" id="heroSub">carregando...</div>
+      <div class="cd-wrap">
+        <div class="cd-top"><span class="cd-label">Abertura do caixa em</span><span class="cd-dias" id="cdDias">35 dias</span></div>
+        <div class="cd-bg"><div class="cd-fill" id="cdBar" style="width:0%"></div></div>
+        <div class="cd-data" id="cdData">—</div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="sc"><div class="sc-label">Confirmadas</div><div class="sc-val g" id="statConf">0</div><div class="sc-sub">este ciclo</div></div>
+      <div class="sc"><div class="sc-label">Pendentes</div><div class="sc-val o" id="statPend">0</div><div class="sc-sub">aguardando</div></div>
+      <div class="sc"><div class="sc-label">Melhor comissão</div><div class="sc-val y" id="statMelhor">R$0</div><div class="sc-sub">em uma venda</div></div>
+      <div class="sc"><div class="sc-label">Total vendido</div><div class="sc-val" id="statTotal" style="font-size:16px">R$0</div><div class="sc-sub">confirmado</div></div>
+    </div>
+    <div class="motiv"><div class="motiv-txt" id="motivTxt">Continue assim! 🚀</div><div class="motiv-sub" id="motivSub">Confirme os pagamentos para acumular seu caixa.</div></div>
+  </div>
+
+  <!-- ORÇAMENTOS -->
+  <div class="tab-content" id="tab-orcamentos">
+    <div class="sec-tit">⏳ Aguardando confirmação de pagamento</div>
+    <div id="orcList"></div>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div class="tab-content" id="tab-historico">
+    <div class="sec-tit">✅ Vendas confirmadas</div>
+    <div id="histList"></div>
+  </div>
+
+  <!-- FOTOS -->
+  <div class="tab-content" id="tab-fotos">
+    <div class="sec-tit">📷 Editar fotos dos produtos</div>
+    <input type="text" class="foto-busca" id="fotoBusca" placeholder="Buscar produto pelo nome..." oninput="renderFotos()">
+    <div id="fotoList"></div>
+  </div>
+</div>
+
+<!-- MODAL FOTO -->
+<div class="modal-overlay" id="modalFoto">
+  <div class="modal-sheet">
+    <div class="ms-handle"></div>
+    <div class="ms-head">
+      <div class="ms-title" id="msFotoTitle">Editar foto</div>
+      <button class="btn-fm" onclick="fecharModalFoto()">Fechar</button>
+    </div>
+    <div class="ms-body">
+      <div class="ms-label">Nome do produto</div>
+      <div style="font-size:13px;color:#7fbaff;margin-bottom:14px;font-weight:600" id="msFotoNome"></div>
+      <div class="ms-label">URL da foto</div>
+      <input class="ms-input" id="msFotoUrl" type="url" placeholder="https://felim.gestor909.com.br/fotos/..." oninput="previewFoto()">
+      <div class="ms-preview" id="msFotoPreview">
+        <span style="font-size:32px;opacity:.3">📷</span>
+      </div>
+      <div class="ms-label" style="margin-bottom:8px">💡 Como buscar a foto:</div>
+      <div style="font-size:11px;color:var(--cinza);line-height:1.7;margin-bottom:14px">
+        1. Abra <strong style="color:#7fbaff">felim.gestor909.com.br</strong><br>
+        2. Encontre o produto<br>
+        3. Segure a foto → "Copiar link da imagem"<br>
+        4. Cole aqui acima
+      </div>
+      <div class="ms-label">Descrição do produto</div>
+      <textarea class="ms-input" id="msFotoDesc" rows="3" placeholder="Descreva o produto..." style="resize:none;margin-bottom:12px"></textarea>
+      <button class="btn-salvar-foto" onclick="salvarFoto()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONFIRMAR PAGAMENTO -->
+<div class="modal-conf" id="modalConf">
+  <div class="mc-box">
+    <div class="mc-ico">💳</div>
+    <div class="mc-title">Confirmar pagamento?</div>
+    <div class="mc-sub" id="mcSub">Você recebeu o comprovante?</div>
+    <div class="mc-val" id="mcVal">R$ 0,00</div>
+    <div class="mc-comis" id="mcComis">Sua comissão: R$ 0,00</div>
+    <div class="mc-btns">
+      <button class="btn-sim" onclick="confirmarVenda()">✅ Confirmar</button>
+      <button class="btn-nao" onclick="fecharConf()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<nav class="nav-bar">
+  <a class="nav-item" href="index.html"><span class="nav-icon">🛍️</span><span class="nav-label">Loja</span></a>
+  <div class="nav-divider"></div>
+  <a class="nav-item active" href="2-vendedora-painel.html"><span class="nav-icon">💰</span><span class="nav-label" style="color:#0078E7">Vendedor(a)</span></a>
+  <div class="nav-divider"></div>
+  <a class="nav-item" href="3-diretor-painel.html"><span class="nav-icon">👑</span><span class="nav-label">Diretor</span></a>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const K_VENDEDORAS='azulplin_vendedoras',K_VENDAS='azulplin_vendas',K_CICLO='azulplin_ciclo',K_FOTOS='azulplin_fotos';
+const CICLO_DIAS=35;
+const FRASES=[
+  {txt:"Você está arrasando! 🔥",sub:"Confirme os pagamentos e seu caixa cresce!"},
+  {txt:"Cada confirmação vale ouro! 💰",sub:"Orçamento confirmado = comissão garantida."},
+  {txt:"A Azul Plin tem orgulho de você! 💙",sub:"Seu trabalho move nossa empresa."},
+  {txt:"Foco no caixa! 🎯",sub:"35 dias passam rápido quando você vende bem."},
+  {txt:"Hoje é dia de fechar negócio! ✅",sub:"Veja seus orçamentos e confirme."},
+];
+
+// LISTA DE TODOS OS PRODUTOS para editar fotos
+const TODOS_PRODS=[
+  {cod:"100002",nome:"Água Sanitária Felim"},
+  {cod:"100006",nome:"Amaciante p/ Roupas BB 5L"},
+  {cod:"100007",nome:"Amaciante p/ Roupas BB 20L"},
+  {cod:"100032",nome:"Cera Auto Brilho Incolor BB 5L"},
+  {cod:"100033",nome:"Cera Auto Brilho Incolor BB 20L"},
+  {cod:"100073",nome:"Cera Incolor Felim"},
+  {cod:"100298",nome:"Cera Incolor Promoção"},
+  {cod:"100085",nome:"Cera Pasta Incolor"},
+  {cod:"100313",nome:"Cloro Solução 6% BB 5L"},
+  {cod:"100314",nome:"Cloro Solução 6% BB 20L"},
+  {cod:"100316",nome:"Cloro Solução 6% BB 50L"},
+  {cod:"100010",nome:"Desengraxante Alcalino BB 5L"},
+  {cod:"100011",nome:"Desengraxante Alcalino BB 20L"},
+  {cod:"100100",nome:"Desinfetante Eucalipto"},
+  {cod:"100108",nome:"Desinfetante Floral"},
+  {cod:"100180",nome:"Desinfetante Lavanda"},
+  {cod:"100104",nome:"Desinfetante Pinho"},
+  {cod:"100112",nome:"Desinfetante Talco BB 5L"},
+  {cod:"100116",nome:"Detergente Amôniaco BB 5L"},
+  {cod:"100159",nome:"Detergente Coco Líq."},
+  {cod:"100120",nome:"Detergente Limão"},
+  {cod:"100128",nome:"Detergente Neutro"},
+  {cod:"100163",nome:"Lava Roupas Líquido BB 5L"},
+  {cod:"100143",nome:"Limpador Multiuso BB 5L"},
+  {cod:"100339",nome:"Limpa Vidros"},
+  {cod:"100167",nome:"Pinho Gel"},
+  {cod:"100155",nome:"Removedor Instantâneo BB 5L"},
+  {cod:"100017",nome:"Restaurador Pretinho"},
+  // Distribuidora
+  {cod:"200470",nome:"Ácido Muriático Limpa Pedras 1L"},
+  {cod:"200347",nome:"Álcool Gel 70% Domus 5L"},
+  {cod:"200420",nome:"Álcool Líquido 70% Domus 1L"},
+  {cod:"200306",nome:"Avental Reforçado Napa Verde"},
+  {cod:"200009",nome:"Bota PVC N.36"},
+  {cod:"200050",nome:"Bota PVC N.38"},
+  {cod:"200052",nome:"Bota PVC N.40"},
+  {cod:"200044",nome:"Bota PVC N.41"},
+  {cod:"200070",nome:"Bota PVC N.42"},
+  {cod:"200311",nome:"Luva Látex Amarela Grande"},
+  {cod:"200108",nome:"Luva Látex Preta Grande"},
+  {cod:"200049",nome:"Luva Látex Verde Grande"},
+  {cod:"200330",nome:"Luva Vinil c/Pó CX 100un"},
+  {cod:"200293",nome:"Máscara Cirúrgica Roxa"},
+  {cod:"200245",nome:"Papel Higiênico Alveflor 30m"},
+  {cod:"200430",nome:"Papel Higiênico Delicate Especial"},
+  {cod:"200207",nome:"Papel Higiênico Delicate Premium"},
+  {cod:"200061",nome:"Papel Rolão 300mx10cm"},
+  {cod:"200204",nome:"Papel Rolão 600mx10cm"},
+  {cod:"200223",nome:"Papel Toalha Popular 1000fl"},
+  {cod:"200313",nome:"Dispenser Copo Água"},
+  {cod:"200416",nome:"Dispenser Papel Rolão"},
+  {cod:"200418",nome:"Dispenser Sabonete 800ml"},
+  {cod:"200411",nome:"Dispenser Saboneteira Espuma"},
+  {cod:"200442",nome:"Vassoura Esfregão Distak"},
+  {cod:"200308",nome:"Vassoura Gari PET 40cm"},
+  {cod:"200119",nome:"Vassoura Piassava Felim N.3"},
+  {cod:"200421",nome:"Rodo Mágico 27cm"},
+  {cod:"200183",nome:"Rodo Metal 40cm"},
+  {cod:"200225",nome:"Rodo Plástico 30cm"},
+  {cod:"200145",nome:"Pano Multiuso 5un"},
+  {cod:"200217",nome:"Pano Mágico Microfibra"},
+  {cod:"200063",nome:"Esponja Dupla Face 3M"},
+  {cod:"200139",nome:"Saco Lixo Preto 20L"},
+  {cod:"200087",nome:"Saco Lixo Preto 40L"},
+  {cod:"200088",nome:"Saco Lixo Preto 60L"},
+  {cod:"200357",nome:"Saco Lixo 110L Tradicional"},
+  {cod:"200152",nome:"Lixeira 15L Tubular Preta"},
+  {cod:"200431",nome:"Lixeira 240L c/Rodas"},
+  {cod:"200314",nome:"Sabonete Gel Natural 5L"},
+  {cod:"200341",nome:"Detergente Clorado Crystal Clor"},
+  {cod:"200258",nome:"Disco Limpeza Verde 350mm"},
+  {cod:"200262",nome:"Disco Polimento Bege 410mm"},
+  {cod:"200015",nome:"Copo Descartável 200ml"},
+  {cod:"200133",nome:"Copo Descartável 50ml"},
+  {cod:"200285",nome:"Touca Descartável TNT"},
+  {cod:"200004",nome:"Balde Plástico Preto 12L"},
+  {cod:"200177",nome:"Pulverizador 500ml"},
+  {cod:"200100",nome:"Tapete Sanitário 100x70cm"},
+];
+
+// Firebase sync
+const _cache = {};
+function get(k){return _cache[k]||[]}
+function geto(k,d={}){return _cache[k]!=null?_cache[k]:d}
+async function save(k,v){
+  _cache[k]=v;localStorage.setItem(k,JSON.stringify(v));
+  if(window.firebaseReady)await window.fbSet('azulplin/'+k,v);
+}
+async function syncAll(cb){
+  const keys=['azulplin_vendas','azulplin_vendedoras','azulplin_ciclo','azulplin_globais','azulplin_fotos'];
+  for(const k of keys){
+    try{
+      const val=await window.fbGet('azulplin/'+k);
+      if(val!=null){_cache[k]=val;localStorage.setItem(k,JSON.stringify(val));}
+      else{const local=localStorage.getItem(k);if(local){_cache[k]=JSON.parse(local);await window.fbSet('azulplin/'+k,_cache[k]);}}
+    }catch(e){}
+  }
+  if(cb)cb();
+}
+['azulplin_vendas','azulplin_vendedoras','azulplin_ciclo','azulplin_globais','azulplin_fotos'].forEach(k=>{
+  try{const v=localStorage.getItem(k);if(v)_cache[k]=JSON.parse(v);}catch{}
+});
+window.addEventListener('firebaseReady',()=>syncAll(()=>renderAll&&renderAll()));
+function fmtBRL(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function fmtDH(iso){return new Date(iso).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}
+function getFotos(){return geto('azulplin_fotos',{})}
+function getFoto(cod){const f=getFotos();return f[cod]||null}
+function salvarFotos(obj){save(K_FOTOS,obj)}
+
+let vendedoraLogada=null,orcConfirmando=null,editandoCod=null;
+
+function fazerLogin(){
+  const pin=document.getElementById('pinInput').value.trim();
+  if(pin.length<4){showToast('PIN mínimo 4 dígitos');return}
+  const v=get(K_VENDEDORAS).find(x=>x.pin===pin);
+  if(!v){document.getElementById('loginErro').classList.add('show');return}
+  vendedoraLogada=v;
+  document.getElementById('loginErro').classList.remove('show');
+  document.getElementById('loginScreen').classList.add('hide');
+  document.getElementById('app').classList.add('show');
+  syncAll(()=>renderAll());
+}
+document.getElementById('pinInput').addEventListener('keydown',e=>{if(e.key==='Enter')fazerLogin()});
+function sair(){vendedoraLogada=null;document.getElementById('pinInput').value='';document.getElementById('loginScreen').classList.remove('hide');document.getElementById('app').classList.remove('show')}
+function setTab(id,btn){document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('on'));btn.classList.add('on');document.getElementById('tab-'+id).classList.add('on');if(id==='fotos')renderFotos();else renderAll()}
+
+function renderAll(){
+  if(!vendedoraLogada)return;
+  const v=vendedoraLogada;
+  document.getElementById('appNome').textContent=`Olá, ${v.nome}! 👋`;
+  document.getElementById('appSub').textContent=`Vendedor(a) Azul Plin · PIN ${v.pin}`;
+  const ciclo=geto(K_CICLO)||{inicio:new Date(v.cadastro||Date.now()).toISOString()};
+  const inicio=new Date(ciclo.inicio);
+  const abertura=new Date(inicio.getTime()+CICLO_DIAS*24*60*60*1000);
+  const agora=new Date();
+  const diasR=Math.max(0,Math.ceil((abertura-agora)/(24*60*60*1000)));
+  const prog=Math.min(100,Math.round(((CICLO_DIAS-diasR)/CICLO_DIAS)*100));
+  document.getElementById('cdDias').textContent=diasR===0?'Hoje! 🎉':`${diasR} dias`;
+  document.getElementById('cdBar').style.width=prog+'%';
+  document.getElementById('cdData').textContent=`Abertura: ${abertura.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}`;
+  const todas=get(K_VENDAS).filter(vd=>vd.vendedoraPin===v.pin);
+  const orcs=todas.filter(vd=>vd.status==='orcamento'&&new Date(vd.data)>=inicio);
+  const conf=todas.filter(vd=>vd.status==='confirmado'&&new Date(vd.data)>=inicio);
+  const totalCaixa=conf.reduce((s,vd)=>s+vd.comissao,0);
+  const totalVendido=conf.reduce((s,vd)=>s+vd.total,0);
+  const melhor=conf.reduce((m,vd)=>Math.max(m,vd.comissao),0);
+  const parts=fmtBRL(totalCaixa).replace('R$\u00a0','').split(',');
+  document.getElementById('heroValor').innerHTML=`R$ ${parts[0]}<span>,${parts[1]||'00'}</span>`;
+  document.getElementById('heroSub').textContent=`${conf.length} venda${conf.length!==1?'s':''} confirmada${conf.length!==1?'s':''}`;
+  document.getElementById('statConf').textContent=conf.length;
+  document.getElementById('statPend').textContent=orcs.length;
+  document.getElementById('statMelhor').textContent=fmtBRL(melhor).replace('R$\u00a0','R$');
+  document.getElementById('statTotal').textContent=fmtBRL(totalVendido).replace('R$\u00a0','R$');
+  const badge=document.getElementById('orcBadge');
+  badge.style.display=orcs.length>0?'':'none';badge.textContent=orcs.length;
+  const fr=FRASES[Math.floor(Math.random()*FRASES.length)];
+  document.getElementById('motivTxt').textContent=fr.txt;
+  document.getElementById('motivSub').textContent=fr.sub;
+  document.getElementById('orcList').innerHTML=orcs.length?[...orcs].reverse().map(orc=>`
+    <div class="orc-card">
+      <div class="orc-head"><div class="orc-cliente">${orc.cliente?.nome||'Cliente'}</div><div class="orc-valor">${fmtBRL(orc.total)}</div></div>
+      <div class="orc-tags">
+        <span class="tag tag-data">📅 ${fmtDH(orc.data)}</span>
+        <span class="tag tag-pend">⏳ Aguardando</span>
+        <span class="tag tag-itens">${orc.itens?.length||0} item${orc.itens?.length!==1?'ns':''}</span>
+        <span class="tag tag-comis">+${fmtBRL(orc.comissao)} se confirmar</span>
+      </div>
+      <div class="orc-itens" id="itens-${orc.id}">${(orc.itens||[]).map(it=>`<div class="orc-item-row"><span class="oir-nome">${it.nome} ×${it.qty}</span><span class="oir-val">${fmtBRL(it.subtotal)}</span></div>`).join('')}</div>
+      <div class="orc-actions">
+        <button class="btn-ver" onclick="document.getElementById('itens-${orc.id}').classList.toggle('show')">📋 Ver itens</button>
+        <button class="btn-conf" onclick="abrirConf('${orc.id}')">✅ Recebi pagamento</button>
+        <button class="btn-canc" onclick="cancelarOrc('${orc.id}')">✕</button>
+      </div>
+    </div>`).join(''):`<div class="empty"><div class="ei">🎉</div><p>Nenhum orçamento pendente!</p></div>`;
+  document.getElementById('histList').innerHTML=conf.length?[...conf].reverse().map(vd=>`
+    <div class="venda-card">
+      <div class="vc-top"><div class="vc-cliente">${vd.cliente?.nome||'Cliente'}</div><div class="vc-valor">${fmtBRL(vd.total)}</div></div>
+      <div class="vc-tags">
+        <span class="tag tag-data">📅 ${fmtDH(vd.data)}</span>
+        <span class="tag tag-comis">+${fmtBRL(vd.comissao)}</span>
+      </div>
+    </div>`).join(''):`<div class="empty"><div class="ei">📦</div><p>Nenhuma venda confirmada ainda.</p></div>`;
+}
+
+function renderFotos(){
+  const q=(document.getElementById('fotoBusca')?.value||'').trim().toUpperCase();
+  const fotos=getFotos();
+  const prods=TODOS_PRODS.filter(p=>!q||p.nome.toUpperCase().includes(q)||p.cod.includes(q));
+  document.getElementById('fotoList').innerHTML=prods.map(p=>{
+    const fotoUrl=fotos[p.cod]||'';
+    return`<div class="foto-card">
+      <img class="foto-img" src="${fotoUrl||'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2256%22 height=%2256%22><rect fill=%22%23152540%22 width=%22100%25%22 height=%22100%25%22/><text y=%2250%25%22 x=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2224%22>📷</text></svg>'}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2256%22 height=%2256%22><rect fill=%22%23152540%22 width=%22100%25%22 height=%22100%25%22/><text y=%2250%25%22 x=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2224%22>📷</text></svg>'" alt="${p.nome}">
+      <div class="foto-info">
+        <div class="foto-nome">${p.nome}</div>
+        <div class="foto-cod">${p.cod} · ${fotoUrl?'✓ com foto':'sem foto'}</div>
+      </div>
+      <button class="btn-editar-foto" onclick="abrirModalFoto('${p.cod}','${p.nome.replace(/'/g,"\\'")}')">✏️ Editar</button>
+    </div>`;
+  }).join('')||`<div class="empty"><div class="ei">🔍</div><p>Nenhum produto encontrado.</p></div>`;
+}
+
+function abrirModalFoto(cod,nome){
+  editandoCod=cod;
+  document.getElementById('msFotoTitle').textContent='Editar foto';
+  document.getElementById('msFotoNome').textContent=nome;
+  const fotoAtual=getFoto(cod)||'';
+  document.getElementById('msFotoUrl').value=fotoAtual;
+  // Carregar descrição salva
+  const descs=geto('azulplin_descs',{});
+  document.getElementById('msFotoDesc').value=descs[cod]||'';
+  previewFoto();
+  document.getElementById('modalFoto').classList.add('open');
+}
+
+function previewFoto(){
+  const url=document.getElementById('msFotoUrl').value.trim();
+  const prev=document.getElementById('msFotoPreview');
+  if(url){prev.innerHTML=`<img src="${url}" onerror="this.parentElement.innerHTML='<span style=font-size:32px;opacity:.3>❌</span>'" style="max-width:100%;max-height:100%;object-fit:contain;padding:10px">`}
+  else{prev.innerHTML='<span style="font-size:32px;opacity:.3">📷</span>'}
+}
+
+async function salvarFoto(){
+  if(!editandoCod)return;
+  const url=document.getElementById('msFotoUrl').value.trim();
+  const desc=document.getElementById('msFotoDesc').value.trim();
+  const fotos=getFotos();
+  if(url)fotos[editandoCod]=url;else delete fotos[editandoCod];
+  await save('azulplin_fotos',fotos);
+  if(desc){
+    const descs=geto('azulplin_descs',{});
+    descs[editandoCod]=desc;
+    await save('azulplin_descs',descs);
+  }
+  fecharModalFoto();
+  renderFotos();
+  showToast('✅ Foto e descrição salvas!');
+}
+
+function fecharModalFoto(){document.getElementById('modalFoto').classList.remove('open');editandoCod=null}
+
+function abrirConf(id){
+  const orc=get(K_VENDAS).find(v=>v.id===id);if(!orc)return;
+  orcConfirmando=id;
+  document.getElementById('mcSub').textContent=`Cliente: ${orc.cliente?.nome||'—'}`;
+  document.getElementById('mcVal').textContent=fmtBRL(orc.total);
+  document.getElementById('mcComis').textContent=`Sua comissão: ${fmtBRL(orc.comissao)}`;
+  document.getElementById('modalConf').classList.add('open');
+}
+function fecharConf(){orcConfirmando=null;document.getElementById('modalConf').classList.remove('open')}
+function confirmarVenda(){
+  if(!orcConfirmando)return;
+  const arr=get(K_VENDAS);
+  const idx=arr.findIndex(v=>v.id===orcConfirmando);if(idx<0)return;
+  arr[idx].status='confirmado';arr[idx].dataConfirmacao=new Date().toISOString();
+  save(K_VENDAS,arr);fecharConf();showToast('✅ Venda confirmada!');renderAll();
+}
+function cancelarOrc(id){
+  if(!confirm('Cancelar este orçamento?'))return;
+  const arr=get(K_VENDAS);const idx=arr.findIndex(v=>v.id===id);if(idx<0)return;
+  arr[idx].status='cancelado';save(K_VENDAS,arr);showToast('Cancelado.');renderAll();
+}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+setInterval(()=>{if(vendedoraLogada)renderAll()},30000);
+</script>
+</body>
+</html>

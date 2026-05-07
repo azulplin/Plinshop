@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0057B8">
+<title>Azul Plin · Loja</title>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--azul:#0057B8;--azul2:#0078E7;--verde:#00A651;--verde2:#00C060;--gold:#F4C430;--laranja:#e8650a;--cream:#f0f5fb;--branco:#fff;--texto:#0d1f35;--texto2:#3a5a7a;--borda:#cce0f5;--cinza:#f0f4f8;--cinza2:#d0dce8;--sombra:0 4px 20px rgba(0,87,184,.12);--font:'Exo 2',sans-serif;--mono:'DM Mono',monospace}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font);background:var(--cream);color:var(--texto);min-height:100dvh;max-width:480px;margin:0 auto;padding-bottom:80px}
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:200px;background:linear-gradient(160deg,var(--azul),var(--azul2));z-index:0;pointer-events:none}
+
+/* NAV BAR */
+.nav-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:200;background:#fff;border-top:2px solid var(--borda);display:flex;align-items:center;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom))}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;text-decoration:none;flex:1;padding:4px 0}
+.nav-icon{font-size:20px}.nav-label{font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--texto2)}
+.nav-item.active .nav-label{color:var(--azul)}
+.nav-divider{width:1px;height:30px;background:var(--borda)}
+
+/* HEADER */
+.hdr{position:sticky;top:0;z-index:50;background:var(--azul);overflow:visible}
+.logo-bar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px}
+.logo-wrap{display:flex;align-items:center;gap:10px}
+.logo-gota{width:34px;height:42px;flex-shrink:0}
+.logo-gota svg{width:100%;height:100%}
+.logo-text{line-height:1}
+.logo-azul{font-size:15px;font-weight:900;color:#fff;letter-spacing:.08em}
+.logo-plin{font-size:15px;font-weight:900;color:var(--verde2);letter-spacing:.08em;margin-top:-2px}
+.logo-sol{font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.18em;margin-top:1px}
+.visitors{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 11px;display:flex;align-items:center;gap:6px}
+.v-dot{width:7px;height:7px;border-radius:50%;background:var(--verde2);box-shadow:0 0 6px var(--verde2);animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
+.v-num{font-family:var(--mono);font-size:12px;color:#fff;font-weight:500}
+.v-lbl{font-size:9px;color:rgba(255,255,255,.55)}
+
+/* ABAS LOJA */
+.loja-tabs{display:flex;background:rgba(0,0,0,.18);border-bottom:1px solid rgba(255,255,255,.1)}
+.loja-tab{flex:1;padding:10px 6px;text-align:center;font-size:12px;font-weight:700;color:rgba(255,255,255,.55);cursor:pointer;border-bottom:3px solid transparent;transition:all .2s}
+.loja-tab.on{color:#fff;border-bottom-color:var(--verde2)}
+
+.search-bar{padding:8px 14px 7px;background:var(--azul)}
+.search-inner{position:relative}
+.search-inner input{width:100%;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.18);border-radius:11px;padding:9px 14px 9px 36px;color:#fff;font-family:var(--font);font-size:14px;outline:none}
+.search-inner input::placeholder{color:rgba(255,255,255,.4)}
+.search-inner input:focus{background:rgba(255,255,255,.2);border-color:var(--verde2)}
+.si{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:rgba(255,255,255,.4);pointer-events:none}
+.filters{display:flex;gap:6px;overflow-x:auto;padding:8px 14px 28px;scrollbar-width:none;background:var(--azul)}
+.filters::-webkit-scrollbar{display:none}
+.fchip{flex-shrink:0;background:rgba(255,255,255,.11);border:1.5px solid rgba(255,255,255,.14);border-radius:99px;padding:5px 13px;color:rgba(255,255,255,.65);font-family:var(--font);font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
+.fchip.on{background:#fff;border-color:#fff;color:var(--azul)}
+
+.promo-strip{margin:10px 14px 0;background:linear-gradient(135deg,#fff7e0,#ffe8a0);border:2px solid var(--gold);border-radius:14px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.promo-strip:active{transform:scale(.98)}
+.ps-left{display:flex;align-items:center;gap:9px}
+.ps-fire{font-size:20px;animation:shake .6s ease-in-out infinite alternate}
+@keyframes shake{from{transform:rotate(-10deg)}to{transform:rotate(10deg)}}
+.ps-title{font-size:14px;font-weight:900;color:#7a5200}
+.ps-sub{font-size:10px;color:#9a7020}
+.ps-arrow{width:24px;height:24px;background:var(--azul);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px}
+
+.distrib-info{margin:10px 14px 0;background:#e8f2ff;border:2px solid var(--borda);border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;display:none}
+.distrib-info.show{display:flex}
+.di-ico{font-size:22px;flex-shrink:0}
+.di-txt{font-size:12px;font-weight:700;color:var(--azul)}
+.di-sub{font-size:10px;color:var(--texto2);margin-top:2px}
+
+.lista{padding:10px 14px 20px;position:relative;z-index:1}
+.cat-sep{display:flex;align-items:center;gap:10px;padding:14px 2px 7px}
+.cat-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--texto2);white-space:nowrap}
+.cat-linha{flex:1;height:2px;background:linear-gradient(90deg,var(--borda),transparent);border-radius:99px}
+
+.pcard{background:#fff;border:2px solid var(--borda);border-radius:18px;margin-bottom:11px;overflow:hidden;box-shadow:var(--sombra);transition:border-color .2s}
+.pcard.in-cart{border-color:var(--azul2)}
+.pcard.prom{border-color:var(--gold)}
+.pcard.distrib{border-color:#b0d4f5}
+.pcard-img-wrap{width:100%;height:155px;background:linear-gradient(145deg,#edf4ff,#d8ebff);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.pcard-img{width:100%;height:100%;object-fit:contain;padding:12px;transition:transform .3s}
+.pcard:active .pcard-img{transform:scale(1.04)}
+.prom-badge{position:absolute;top:9px;left:9px;background:linear-gradient(135deg,var(--gold),#c8960a);color:#fff;font-size:10px;font-weight:900;padding:3px 9px;border-radius:7px}
+.prom-pct{position:absolute;top:9px;right:9px;background:var(--verde);color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px}
+
+.pcard-body{padding:11px 13px 8px}
+.pcard-name{font-size:14px;font-weight:800;color:var(--texto);margin-bottom:3px;line-height:1.3}
+.pcard-desc{font-size:12px;color:var(--texto2);line-height:1.5;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pcard-desc.exp{-webkit-line-clamp:unset}
+.btn-mais{background:none;border:none;color:var(--azul2);font-size:11px;font-weight:800;cursor:pointer;padding:0;font-family:var(--font)}
+.pcard-meta{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+.tag-emb{background:#e8f2ff;color:var(--azul);font-size:10px;font-weight:800;padding:2px 8px;border-radius:5px;border:1px solid var(--borda)}
+.tag-cod{font-family:var(--mono);font-size:9px;color:#a0b8cc}
+
+
+.pcard-price{display:flex;align-items:center;justify-content:space-between;padding:9px 13px 11px;border-top:2px solid var(--cinza)}
+.price-val{font-family:var(--mono);font-size:22px;font-weight:500;color:var(--azul);white-space:nowrap;letter-spacing:0;line-height:1}
+.btn-add{background:linear-gradient(135deg,var(--azul),var(--azul2));border:none;border-radius:11px;padding:9px 17px;color:#fff;font-family:var(--font);font-size:13px;font-weight:800;cursor:pointer;transition:all .16s}
+.btn-add:active{transform:scale(.92)}.btn-add.ok{background:linear-gradient(135deg,var(--verde),var(--verde2))}
+.qty-strip{display:flex;align-items:center;justify-content:space-between;padding:7px 13px 11px;background:#f0f6ff;border-top:1px solid var(--borda)}
+.qty-btns{display:flex;align-items:center;gap:11px}
+.qbtn{width:30px;height:30px;background:#fff;border:2px solid var(--borda);border-radius:9px;font-size:17px;font-weight:700;color:var(--azul);cursor:pointer;display:flex;align-items:center;justify-content:center}
+.qbtn:active{background:var(--azul);color:#fff;border-color:var(--azul)}
+.qnum{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--azul);min-width:20px;text-align:center}
+.qty-sub{font-size:12px;color:var(--texto2);text-align:right}
+.qty-sub strong{display:block;font-family:var(--mono);font-size:14px;color:var(--azul);font-weight:600}
+
+.fab{position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(120px);z-index:100;background:linear-gradient(135deg,var(--azul),var(--azul2));border:none;border-radius:99px;padding:13px 24px;color:#fff;font-family:var(--font);font-size:14px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:9px;box-shadow:0 6px 24px rgba(0,87,184,.4);transition:all .32s cubic-bezier(.34,1.56,.64,1);white-space:nowrap}
+.fab.vis{transform:translateX(-50%) translateY(0)}.fab:active{transform:translateX(-50%) scale(.93)}
+.fab-badge{background:var(--verde2);color:#fff;font-family:var(--mono);font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;min-width:22px;text-align:center}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,15,40,.65);z-index:300;backdrop-filter:blur(8px);align-items:flex-end}
+.overlay.open{display:flex;animation:fadeB .2s ease}
+@keyframes fadeB{from{opacity:0}to{opacity:1}}
+.sheet{background:#fff;border-radius:22px 22px 0 0;width:100%;max-height:92dvh;display:flex;flex-direction:column;animation:upSlide .3s cubic-bezier(.34,1.2,.64,1)}
+@keyframes upSlide{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.s-handle{padding:11px 0 0}.s-handle-bar{width:38px;height:4px;background:var(--cinza2);border-radius:99px;margin:0 auto}
+.s-head{display:flex;align-items:center;justify-content:space-between;padding:13px 17px 11px;border-bottom:2px solid var(--cinza)}
+.s-title{font-size:17px;font-weight:900;color:var(--texto)}
+.btn-fechar{background:var(--cinza);border:1.5px solid var(--cinza2);border-radius:9px;padding:6px 13px;color:var(--texto2);font-family:var(--font);font-size:12px;font-weight:700;cursor:pointer}
+.s-body{overflow-y:auto;flex:1;padding:13px 15px}
+.campo-grp{background:var(--cinza);border:2px solid var(--borda);border-radius:13px;padding:13px;margin-bottom:11px}
+.campo-tit{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--texto2);margin-bottom:9px}
+.campo-inp{width:100%;background:#fff;border:2px solid var(--borda);border-radius:9px;padding:10px 12px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--texto);outline:none;margin-bottom:7px;transition:border-color .2s}
+.campo-inp:last-child{margin-bottom:0}.campo-inp:focus{border-color:var(--azul2)}
+.campo-inp::placeholder{color:#a0b8cc}
+.vsel{width:100%;background:#fff;border:2px solid var(--borda);border-radius:9px;padding:10px 12px;font-family:var(--font);font-size:14px;font-weight:600;color:var(--texto);outline:none;-webkit-appearance:none}
+.ci{display:flex;align-items:center;gap:11px;padding:9px 0;border-bottom:1.5px solid var(--cinza)}
+.ci-img{width:48px;height:48px;border-radius:9px;object-fit:contain;background:var(--cinza);padding:4px;flex-shrink:0;border:1.5px solid var(--borda)}
+.ci-info{flex:1}.ci-name{font-size:13px;font-weight:700;color:var(--texto);line-height:1.3}
+.ci-qty{font-size:11px;color:var(--texto2);margin-top:1px}
+.ci-tot{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--azul);flex-shrink:0}
+.totais{background:linear-gradient(135deg,var(--azul),var(--azul2));border-radius:15px;padding:16px;margin:13px 0 0}
+.trow{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.trow .tl{font-size:12px;color:rgba(255,255,255,.55);font-weight:600}.trow .tv{font-family:var(--mono);font-size:13px;color:#fff}
+.trow.grand .tl{font-size:14px;font-weight:800;color:rgba(255,255,255,.9)}.trow.grand .tv{font-size:22px;font-weight:600;color:#fff}
+.orc-aviso{background:#fff8e0;border:2px solid var(--gold);border-radius:13px;padding:12px 14px;margin:11px 0 0;display:flex;gap:9px;align-items:flex-start}
+.oa-ico{font-size:18px;flex-shrink:0}.oa-txt{font-size:12px;color:#7a5a00;line-height:1.5;font-weight:700}
+.oa-sub{font-size:11px;color:#a07820;margin-top:2px}
+.s-foot{padding:13px 15px 22px;border-top:2px solid var(--cinza);background:#fff;display:flex;flex-direction:column;gap:7px}
+.btn-wa{width:100%;background:#25D366;border:none;border-radius:13px;padding:15px;color:#fff;font-family:var(--font);font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-wa:active{opacity:.88}
+.btn-limpar{width:100%;background:transparent;border:2px solid var(--borda);border-radius:11px;padding:10px;color:#a0b8cc;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer}
+.success-wrap{display:none;flex-direction:column;align-items:center;justify-content:center;padding:44px 24px;text-align:center;min-height:300px}
+.success-wrap.show{display:flex}
+.success-ico{font-size:60px;margin-bottom:18px;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-title{font-size:24px;font-weight:900;color:var(--azul);margin-bottom:8px}
+.success-sub{font-size:13px;color:var(--texto2);line-height:1.7}
+.empty{text-align:center;padding:60px 30px;color:#a0b8cc}.empty .ei{font-size:44px;margin-bottom:14px;opacity:.4}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--azul);color:#fff;padding:9px 20px;border-radius:99px;font-size:12px;font-weight:700;z-index:500;opacity:0;transition:all .22s;white-space:nowrap;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAIYIqc9ie9yiHmR3wsmzXIPz32Ilk50Ww",
+  authDomain: "azul-plin-shop.firebaseapp.com",
+  projectId: "azul-plin-shop",
+  storageBucket: "azul-plin-shop.firebasestorage.app",
+  messagingSenderId: "1066498043732",
+  appId: "1:1066498043732:web:3c622747dff78e2799a2c1"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Expor funções globais de Firebase
+window.fbGet = async (path) => {
+  const snap = await get(ref(db, path));
+  return snap.exists() ? snap.val() : null;
+};
+window.fbSet = async (path, val) => {
+  await set(ref(db, path), val);
+};
+window.fbListen = (path, cb) => {
+  onValue(ref(db, path), snap => cb(snap.exists() ? snap.val() : null));
+};
+window.firebaseReady = true;
+window.dispatchEvent(new Event('firebaseReady'));
+</script>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo-bar">
+    <div class="logo-wrap">
+      <div class="logo-gota">
+        <svg viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#0096FF"/><stop offset="100%" style="stop-color:#0057B8"/></linearGradient>
+            <linearGradient id="g2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#00C060"/><stop offset="100%" style="stop-color:#0096FF"/></linearGradient>
+          </defs>
+          <path d="M50 5 C50 5 10 55 10 78 C10 101 28 115 50 115 C72 115 90 101 90 78 C90 55 50 5 50 5Z" fill="url(#g1)"/>
+          <path d="M15 82 Q30 68 50 78 Q70 88 85 74 L85 95 Q72 110 50 112 Q28 113 15 98Z" fill="url(#g2)" opacity=".9"/>
+          <ellipse cx="35" cy="50" rx="8" ry="14" fill="white" opacity=".22" transform="rotate(-15,35,50)"/>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <div class="logo-azul">AZUL</div>
+        <div class="logo-plin">PLIN</div>
+        <div class="logo-sol">Soluções</div>
+      </div>
+    </div>
+    <div class="visitors">
+      <div class="v-dot"></div>
+      <div><div class="v-num" id="vCount">1 online</div><div class="v-lbl">agora</div></div>
+    </div>
+  </div>
+  <div class="loja-tabs">
+    <div class="loja-tab on" onclick="setAba('felim',this)">🧴 Linha Felim</div>
+    <div class="loja-tab" onclick="setAba('distrib',this)">🧹 Distribuidora</div>
+  </div>
+  <div class="search-bar">
+    <div class="search-inner">
+      <span class="si">🔍</span>
+      <input type="text" id="searchInput" placeholder="Buscar produto..." oninput="renderLista()">
+    </div>
+  </div>
+  <div class="filters" id="filtersBar"></div>
+</div>
+
+<div class="promo-strip" id="promoStrip" onclick="togglePromo()">
+  <div class="ps-left"><div class="ps-fire">🔥</div><div><div class="ps-title">PROMOÇÕES FELIM</div><div class="ps-sub">Preços especiais selecionados</div></div></div>
+  <div class="ps-arrow">›</div>
+</div>
+
+<div class="distrib-info" id="distribInfo">
+  <div class="di-ico">🏭</div>
+  <div><div class="di-txt">Linha Distribuidora Felim</div><div class="di-sub">EPI, descartáveis e limpeza profissional</div></div>
+</div>
+
+<div class="lista" id="lista"></div>
+
+<button class="fab" id="fab" onclick="abrirSheet()">🛒 Ver pedido <span class="fab-badge" id="fabBadge">0</span></button>
+
+<div class="overlay" id="overlay" onclick="fOv(event)">
+  <div class="sheet">
+    <div class="s-handle"><div class="s-handle-bar"></div></div>
+    <div class="s-head"><div class="s-title" id="sTitle">🛒 Seu pedido</div><button class="btn-fechar" onclick="fecharSheet()">Fechar</button></div>
+    <div class="s-body" id="sBody"></div>
+    <div class="s-foot" id="sFoot">
+      <button class="btn-wa" onclick="finalizar()">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Enviar pelo WhatsApp
+      </button>
+      <button class="btn-limpar" onclick="limpar()">Limpar pedido</button>
+    </div>
+  </div>
+</div>
+
+<nav class="nav-bar">
+  <a class="nav-item active" href="index.html"><span class="nav-icon">🛍️</span><span class="nav-label" style="color:var(--azul)">Loja</span></a>
+  <div class="nav-divider"></div>
+  <a class="nav-item" href="2-vendedora-painel.html"><span class="nav-icon">💰</span><span class="nav-label">Vendedor(a)</span></a>
+  <div class="nav-divider"></div>
+  <a class="nav-item" href="3-diretor-painel.html"><span class="nav-icon">👑</span><span class="nav-label">Diretor</span></a>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const GRUPO_WA='JLUDrAJIyACCVskk9oCuTy';
+const K_VENDAS='azulplin_vendas',K_VENDEDORAS='azulplin_vendedoras',K_VISITORS='azulplin_visitors',K_GLOBAIS='azulplin_globais';
+// Firebase sync — dados compartilhados entre aparelhos
+const _cache = {};
+function get(k){return _cache[k]||[]}
+function geto(k,d={}){return _cache[k]!=null?_cache[k]:d}
+async function save(k,v){
+  _cache[k]=v;
+  localStorage.setItem(k,JSON.stringify(v));
+  if(window.firebaseReady)await window.fbSet('azulplin/'+k,v);
+}
+async function syncFirebase(){
+  const keys=['azulplin_vendas','azulplin_vendedoras','azulplin_ciclo','azulplin_globais','azulplin_visitors','azulplin_fotos'];
+  for(const k of keys){
+    try{
+      const val=await window.fbGet('azulplin/'+k);
+      if(val!=null){_cache[k]=val;localStorage.setItem(k,JSON.stringify(val));}
+      else{const local=localStorage.getItem(k);if(local){_cache[k]=JSON.parse(local);await window.fbSet('azulplin/'+k,_cache[k]);}}
+    }catch(e){}
+  }
+}
+// Inicializar cache do localStorage imediatamente
+['azulplin_vendas','azulplin_vendedoras','azulplin_ciclo','azulplin_globais','azulplin_visitors','azulplin_fotos'].forEach(k=>{
+  try{const v=localStorage.getItem(k);if(v)_cache[k]=JSON.parse(v);}catch{}
+});
+// Sincronizar com Firebase quando estiver pronto
+window.addEventListener('firebaseReady',()=>syncFirebase().then(()=>renderLista&&renderLista()));
+
+function fmtBRL(v){return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}
+function getG(){return geto(K_GLOBAIS,{desconto:25,margem:37,comissao:6,descProm:10,maxDescDistrib:7})}
+
+// VISITANTES
+const VID=Date.now().toString()+Math.random().toString(36).slice(2);
+function ping(){const now=Date.now(),vs=geto(K_VISITORS,{});vs[VID]=now;Object.keys(vs).forEach(id=>{if(now-vs[id]>120000)delete vs[id]});save(K_VISITORS,vs);document.getElementById('vCount').textContent=Object.keys(vs).length+' online'}
+ping();setInterval(ping,20000);
+
+// PRODUTOS FELIM
+const PF=[
+  {cod:"100002",nome:"Água Sanitária Felim",cat:"Água Sanitária",emb:"BB 5L",pb:17.80,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_76_20170911_143819_1.jpg",desc:"Desinfecção de hortifrutícolas e água para consumo. Ação germicida e bactericida."},
+  {cod:"100006",nome:"Amaciante p/ Roupas",cat:"Amaciante",emb:"BB 5L",pb:21.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_72_20160705_135416_1.jpg",desc:"Restaura as fibras dos tecidos deixando a roupa perfumada e suave ao toque."},
+  {cod:"100007",nome:"Amaciante p/ Roupas",cat:"Amaciante",emb:"BB 20L",pb:105.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_72_20160705_135416_1.jpg",desc:"Embalagem econômica 20L."},
+  {cod:"100032",nome:"Cera Auto Brilho Incolor",cat:"Ceras",emb:"BB 5L",pb:49.80,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_66_20160718_131007_1.jpg",desc:"Brilho intenso e ação antiderrapante para pisos."},
+  {cod:"100033",nome:"Cera Auto Brilho Incolor",cat:"Ceras",emb:"BB 20L",pb:220.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_66_20160718_131007_1.jpg",desc:"Embalagem 20L profissional."},
+  {cod:"100073",nome:"Cera Incolor Felim",cat:"Ceras",emb:"BB 5L",pb:34.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_46_20160729_132934_1.jpg",desc:"Proteção e brilho de pisos. Alta durabilidade."},
+  {cod:"100298",nome:"Cera Incolor Promoção",cat:"Ceras",emb:"BB 50L",pb:249.00,prom:true,foto:"https://felim.gestor909.com.br/fotos/c_46_20160729_132934_1.jpg",desc:"Oferta especial 50L."},
+  {cod:"100085",nome:"Cera Pasta Incolor",cat:"Ceras",emb:"LT 13KG",pb:726.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_97_20160907_142630_1.jpg",desc:"Pasta brilho lata 13kg. Uso profissional."},
+  {cod:"100257",nome:"Cera Pasta Incolor Promo",cat:"Ceras",emb:"LT 13KG",pb:545.00,prom:true,foto:"https://felim.gestor909.com.br/fotos/c_97_20160907_142630_1.jpg",desc:"Promoção especial 13kg."},
+  {cod:"100313",nome:"Cloro Solução 6%",cat:"Cloro",emb:"BB 5L",pb:31.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_68_20160711_101954_1.jpg",desc:"Cloro líquido 6% para piscinas e ambientes."},
+  {cod:"100314",nome:"Cloro Solução 6%",cat:"Cloro",emb:"BB 20L",pb:161.40,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_68_20160711_101954_1.jpg",desc:"Embalagem 20L profissional."},
+  {cod:"100316",nome:"Cloro Solução 6%",cat:"Cloro",emb:"BB 50L",pb:342.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_68_20160711_101954_1.jpg",desc:"Embalagem 50L para grande escala."},
+  {cod:"100010",nome:"Desengraxante Alcalino",cat:"Desengraxante",emb:"BB 5L",pb:23.80,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_21_20160729_140403_1.jpg",desc:"Remove gorduras de coifas e fogões."},
+  {cod:"100011",nome:"Desengraxante Alcalino",cat:"Desengraxante",emb:"BB 20L",pb:116.20,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_21_20160729_140403_1.jpg",desc:"Embalagem 20L profissional."},
+  {cod:"100100",nome:"Desinfetante Eucalipto",cat:"Desinfetante",emb:"BB 5L",pb:21.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_79_20160718_171932_1.jpg",desc:"Fragrância eucalipto. Limpa e desinfeta."},
+  {cod:"100108",nome:"Desinfetante Floral",cat:"Desinfetante",emb:"BB 5L",pb:21.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_14_20160908_100539_1.jpg",desc:"Fragrância floral suave."},
+  {cod:"100180",nome:"Desinfetante Lavanda",cat:"Desinfetante",emb:"BB 5L",pb:21.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_60_20160729_180039_1.jpg",desc:"Fragrância lavanda relaxante."},
+  {cod:"100104",nome:"Desinfetante Pinho",cat:"Desinfetante",emb:"BB 5L",pb:21.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_80_20160718_153653_1.jpg",desc:"Clássico pinho. Eficaz em banheiros."},
+  {cod:"100112",nome:"Desinfetante Talco",cat:"Desinfetante",emb:"BB 5L",pb:21.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_62_20160715_130610_1.jpg",desc:"Fragrância suave de talco."},
+  {cod:"100113",nome:"Desinfetante Talco",cat:"Desinfetante",emb:"BB 20L",pb:103.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_62_20160715_130610_1.jpg",desc:"Embalagem 20L profissional."},
+  {cod:"100116",nome:"Detergente Amôniaco",cat:"Detergente",emb:"BB 5L",pb:27.60,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_75_20160908_084745_1.jpg",desc:"Remove gorduras com alta eficiência."},
+  {cod:"100117",nome:"Detergente Amôniaco",cat:"Detergente",emb:"BB 20L",pb:132.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_75_20160908_084745_1.jpg",desc:"Embalagem 20L profissional."},
+  {cod:"100159",nome:"Detergente Coco Líq.",cat:"Detergente",emb:"BB 5L",pb:27.60,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_59_20160711_104329_1.jpg",desc:"Fórmula suave à base de coco."},
+  {cod:"100224",nome:"Detergente Gel Erva Doce",cat:"Detergente",emb:"BB 5L",pb:21.00,prom:true,foto:"https://felim.gestor909.com.br/fotos/c_14_20160711_104621_1.jpg",desc:"Promoção. Fragrância erva-doce."},
+  {cod:"100120",nome:"Detergente Limão",cat:"Detergente",emb:"BB 5L",pb:27.60,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_96_20160718_180149_1.jpg",desc:"Fragrância cítrica de limão."},
+  {cod:"100128",nome:"Detergente Neutro",cat:"Detergente",emb:"BB 5L",pb:27.60,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_34_20160801_200531_1.jpg",desc:"Neutro suave para louças."},
+  {cod:"100163",nome:"Lava Roupas Líquido",cat:"Lava Roupas",emb:"BB 5L",pb:55.60,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_30_20160711_110815_1.jpg",desc:"Com alvejante seguro. Clareia brancos."},
+  {cod:"100164",nome:"Lava Roupas Líquido",cat:"Lava Roupas",emb:"BB 20L",pb:243.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_30_20160711_110815_1.jpg",desc:"Embalagem 20L profissional."},
+  {cod:"100371",nome:"Limpa Alumínio",cat:"Limpadores",emb:"BB 5L",pb:34.60,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_91_20240606_185152_1.este 1 site.png",desc:"Limpa alumínio, inox e metais."},
+  {cod:"100339",nome:"Limpa Vidros",cat:"Limpadores",emb:"BB 5L",pb:29.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_78_20160822_203228_1.jpg",desc:"Brilho sem manchas em vidros."},
+  {cod:"100143",nome:"Limpador Multiuso",cat:"Limpadores",emb:"BB 5L",pb:38.80,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_80_20160718_145647_1.jpg",desc:"Para vidros, azulejos e pisos."},
+  {cod:"100144",nome:"Limpador Multiuso",cat:"Limpadores",emb:"BB 20L",pb:176.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_80_20160718_145647_1.jpg",desc:"Embalagem 20L profissional."},
+  {cod:"100095",nome:"Odorizante Conc. Floral",cat:"Odorizantes",emb:"KIT 1L",pb:116.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_17_20160908_103311_1.jpg",desc:"Concentrado floral diluição 1:50."},
+  {cod:"100271",nome:"Odorizante Conc. Lavanda",cat:"Odorizantes",emb:"KIT 1L",pb:116.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_59_20160822_213850_1.jpg",desc:"Concentrado lavanda diluição 1:50."},
+  {cod:"100167",nome:"Pinho Gel",cat:"Pinho Gel",emb:"BB 5L",pb:32.40,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_50_20160711_114715_1.jpg",desc:"Limpeza pesada de pisos."},
+  {cod:"100155",nome:"Removedor Instantâneo",cat:"Removedor",emb:"BB 5L",pb:50.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_51_20160801_192504_1.jpg",desc:"Remove qualquer cera."},
+  {cod:"100156",nome:"Removedor Instantâneo",cat:"Removedor",emb:"BB 20L",pb:221.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_51_20160801_192504_1.jpg",desc:"Embalagem 20L profissional."},
+  {cod:"100017",nome:"Restaurador Pretinho",cat:"Outros",emb:"BB 5L",pb:67.00,prom:false,foto:"https://felim.gestor909.com.br/fotos/c_79_20160718_150503_1.jpg",desc:"Restaura plásticos e borrachas."},
+];
+
+// PRODUTOS DISTRIBUIDORA
+const PD=[
+  {cod:"200470",nome:"Ácido Muriático Limpa Pedras 1L",cat:"Ácidos e Solventes",emb:"CX 12x1L",pb:9.99,foto:"",desc:"Ácido muriático para limpeza profunda de pedras e pisos."},
+  {cod:"200347",nome:"Álcool Gel 70% Domus 5L",cat:"Ácidos e Solventes",emb:"CX 2x5L",pb:45.40,foto:"",desc:"Álcool gel 70% bactericida. Embalagem 5L."},
+  {cod:"200420",nome:"Álcool Líquido 70% Domus 1L",cat:"Ácidos e Solventes",emb:"CX 12x1L",pb:8.80,foto:"",desc:"Álcool líquido 70% para superfícies."},
+  {cod:"200149",nome:"Álcool Líquido 70% Domus 5L",cat:"Ácidos e Solventes",emb:"CX 2x5L",pb:41.50,foto:"",desc:"Álcool líquido 70% embalagem 5L."},
+  {cod:"200219",nome:"Soda Cáustica Dragão 1kg",cat:"Ácidos e Solventes",emb:"CX 12x100g",pb:23.40,foto:"",desc:"Soda cáustica 99,99% para desentupimento e limpeza profunda."},
+  {cod:"200306",nome:"Avental Reforçado Napa Verde",cat:"EPIs",emb:"UN",pb:39.90,foto:"",desc:"Avental napa verde reforçado 0,62x1,10m."},
+  {cod:"200009",nome:"Bota PVC N.36",cat:"EPIs",emb:"PAR",pb:54.60,foto:"",desc:"Bota PVC preta cano médio com forro. N.36."},
+  {cod:"200050",nome:"Bota PVC N.38",cat:"EPIs",emb:"PAR",pb:54.60,foto:"",desc:"Bota PVC preta cano médio com forro. N.38."},
+  {cod:"200052",nome:"Bota PVC N.40",cat:"EPIs",emb:"PAR",pb:54.60,foto:"",desc:"Bota PVC preta cano médio com forro. N.40."},
+  {cod:"200044",nome:"Bota PVC N.41",cat:"EPIs",emb:"PAR",pb:54.60,foto:"",desc:"Bota PVC preta cano médio com forro. N.41."},
+  {cod:"200070",nome:"Bota PVC N.42",cat:"EPIs",emb:"PAR",pb:54.60,foto:"",desc:"Bota PVC preta cano médio com forro. N.42."},
+  {cod:"200311",nome:"Luva Látex Amarela Grande",cat:"EPIs",emb:"DÚZIA",pb:4.30,foto:"",desc:"Luva látex reutilizável grande."},
+  {cod:"200309",nome:"Luva Látex Amarela Pequena",cat:"EPIs",emb:"DÚZIA",pb:4.30,foto:"",desc:"Luva látex reutilizável pequena."},
+  {cod:"200108",nome:"Luva Látex Preta Grande",cat:"EPIs",emb:"PC 10un",pb:7.90,foto:"",desc:"Luva látex preta Mucambo Pro 157. Grande."},
+  {cod:"200049",nome:"Luva Látex Verde Grande",cat:"EPIs",emb:"PC 10un",pb:6.90,foto:"",desc:"Luva látex verde Mucambo. Grande."},
+  {cod:"200330",nome:"Luva Vinil c/Pó GDE CX 100un",cat:"EPIs",emb:"CX 100un",pb:45.90,foto:"",desc:"Luva descartável vinil com pó. CX 100un."},
+  {cod:"200337",nome:"Luva Vinil s/Pó GDE CX 100un",cat:"EPIs",emb:"CX 100un",pb:45.90,foto:"",desc:"Luva descartável vinil sem pó. CX 100un."},
+  {cod:"200293",nome:"Máscara Cirúrgica Roxa CX 50un",cat:"EPIs",emb:"CX 50un",pb:9.90,foto:"",desc:"Máscara descartável cirúrgica roxa."},
+  {cod:"200392",nome:"Protetor Facial Nobre",cat:"EPIs",emb:"UN",pb:9.90,foto:"",desc:"Protetor facial para serviços com risco de respingos."},
+  {cod:"200245",nome:"Papel Higiênico Alveflor 30m",cat:"Papel e Higiene",emb:"FD 16x4rl",pb:49.90,foto:"",desc:"Papel higiênico folha simples 30m. Fardo 16 pacotes."},
+  {cod:"200430",nome:"Papel Higiênico Delicate Especial",cat:"Papel e Higiene",emb:"FD 16x4rl",pb:69.00,foto:"",desc:"Papel higiênico Delicate Especial 30m."},
+  {cod:"200207",nome:"Papel Higiênico Delicate Premium FL.Dupla",cat:"Papel e Higiene",emb:"FD 16x4rl",pb:106.00,foto:"",desc:"Papel higiênico Premium folha dupla 30m."},
+  {cod:"200061",nome:"Papel Rolão 300mx10cm",cat:"Papel e Higiene",emb:"FD 8rl",pb:49.60,foto:"",desc:"Papel toalha rolão branco 300mx10cm."},
+  {cod:"200204",nome:"Papel Rolão 600mx10cm",cat:"Papel e Higiene",emb:"FD 8rl",pb:98.00,foto:"",desc:"Papel toalha rolão branco 600mx10cm."},
+  {cod:"200223",nome:"Papel Toalha Popular 1000fl",cat:"Papel e Higiene",emb:"FD 1000fl",pb:12.60,foto:"",desc:"Papel toalha branco popular 20x21cm."},
+  {cod:"200209",nome:"Papel Toalha Tradicional 1000fl",cat:"Papel e Higiene",emb:"FD 1000fl",pb:16.80,foto:"",desc:"Papel toalha branco tradicional 23x21cm."},
+  {cod:"200313",nome:"Dispenser Copo Água 150-200ml",cat:"Dispensers",emb:"UN",pb:46.00,foto:"",desc:"Dispenser para copo de água Nobre."},
+  {cod:"200312",nome:"Dispenser Copo Café 50ml",cat:"Dispensers",emb:"UN",pb:35.50,foto:"",desc:"Dispenser para copo de café 50ml."},
+  {cod:"200416",nome:"Dispenser Papel Rolão 300-500m",cat:"Dispensers",emb:"UN",pb:32.00,foto:"",desc:"Dispenser papel higiênico rolão Nobre Street."},
+  {cod:"200418",nome:"Dispenser Sabonete/Álcool 800ml",cat:"Dispensers",emb:"UN",pb:40.30,foto:"",desc:"Dispenser Nobre Street 800ml."},
+  {cod:"200411",nome:"Dispenser Saboneteira Espuma 800ml",cat:"Dispensers",emb:"UN",pb:57.00,foto:"",desc:"Saboneteira com reservatório espuma 800ml."},
+  {cod:"200417",nome:"Dispenser Toalha Nobre Street",cat:"Dispensers",emb:"UN",pb:30.90,foto:"",desc:"Dispenser de toalha de papel Nobre Street."},
+  {cod:"200442",nome:"Vassoura Esfregão Distak Nylon",cat:"Vassouras e Rodos",emb:"DÚZIA",pb:13.90,foto:"",desc:"Vassoura esfregão Distak Nylon."},
+  {cod:"200308",nome:"Vassoura Gari PET 40cm",cat:"Vassouras e Rodos",emb:"DÚZIA",pb:24.90,foto:"",desc:"Vassoura gari PET canaleta 40cm."},
+  {cod:"200124",nome:"Vassoura Odim Gari 40cm",cat:"Vassouras e Rodos",emb:"CX 6un",pb:36.30,foto:"",desc:"Vassoura Odim Gari 40cm com cabo 1,40m."},
+  {cod:"200119",nome:"Vassoura Piassava Felim Combate N.3",cat:"Vassouras e Rodos",emb:"CX 6un",pb:21.70,foto:"",desc:"Vassoura piassava Felim Combate N.3."},
+  {cod:"200122",nome:"Vassoura Piassava Tradicional N.3",cat:"Vassouras e Rodos",emb:"CX 6un",pb:25.90,foto:"",desc:"Vassoura piassava Felim Tradicional N.3."},
+  {cod:"200421",nome:"Rodo Mágico 27cm",cat:"Vassouras e Rodos",emb:"UN",pb:57.00,foto:"",desc:"Rodo mágico Nobre cabo 1,27m."},
+  {cod:"200183",nome:"Rodo Metal 40cm",cat:"Vassouras e Rodos",emb:"CX 6un",pb:37.50,foto:"",desc:"Rodo metal reforçado 40cm cabo 1,5m."},
+  {cod:"200225",nome:"Rodo Plástico 30cm",cat:"Vassouras e Rodos",emb:"DÚZIA",pb:5.60,foto:"",desc:"Rodo plástico puxa-seca 30cm."},
+  {cod:"200239",nome:"Rodo Plástico 60cm",cat:"Vassouras e Rodos",emb:"DÚZIA",pb:9.50,foto:"",desc:"Rodo plástico puxa-seca 60cm."},
+  {cod:"200145",nome:"Pano Multiuso 5un 30x50cm",cat:"Panos e Fibras",emb:"PC",pb:3.30,foto:"",desc:"Pano multiuso pacote 5 unidades 30x50cm."},
+  {cod:"200217",nome:"Pano Mágico Microfibra 40x40cm",cat:"Panos e Fibras",emb:"PC 2un",pb:7.90,foto:"",desc:"Pano mágico microfibra 40x40cm."},
+  {cod:"200331",nome:"Flanela Grande 38x58cm Branca",cat:"Panos e Fibras",emb:"DÚZIA",pb:2.95,foto:"",desc:"Flanela grande 38x58cm branca."},
+  {cod:"200063",nome:"Esponja Dupla Face 3M",cat:"Panos e Fibras",emb:"CX 120un",pb:1.65,foto:"",desc:"Esponja dupla face S.Brith 3M 110x75mm."},
+  {cod:"200266",nome:"Fibra Fibraco S.Brith 5un",cat:"Panos e Fibras",emb:"PC",pb:11.90,foto:"",desc:"Fibra limpeza Fibraco S.Brith 5 unidades."},
+  {cod:"200139",nome:"Saco Lixo Preto 20L",cat:"Sacos e Lixeiras",emb:"CENTO",pb:14.90,foto:"",desc:"Saco de lixo preto 20L. Cento."},
+  {cod:"200087",nome:"Saco Lixo Preto 40L",cat:"Sacos e Lixeiras",emb:"CENTO",pb:18.60,foto:"",desc:"Saco de lixo preto 40L. Cento."},
+  {cod:"200088",nome:"Saco Lixo Preto 60L",cat:"Sacos e Lixeiras",emb:"CENTO",pb:26.80,foto:"",desc:"Saco de lixo preto 60L. Cento."},
+  {cod:"200357",nome:"Saco Lixo Preto 110L Tradicional",cat:"Sacos e Lixeiras",emb:"CENTO",pb:49.40,foto:"",desc:"Saco lixo preto 110L tradicional."},
+  {cod:"200356",nome:"Saco Lixo Preto 110L Reforçado",cat:"Sacos e Lixeiras",emb:"CENTO",pb:68.00,foto:"",desc:"Saco lixo preto 110L reforçado."},
+  {cod:"200086",nome:"Saco Lixo Preto 200L Reforçado",cat:"Sacos e Lixeiras",emb:"CENTO",pb:91.90,foto:"",desc:"Saco lixo preto 200L reforçado."},
+  {cod:"200152",nome:"Lixeira 15L Tubular Preta",cat:"Sacos e Lixeiras",emb:"UN",pb:24.60,foto:"",desc:"Lixeira plástica tubular preta 15L."},
+  {cod:"200431",nome:"Lixeira 240L c/Rodas",cat:"Sacos e Lixeiras",emb:"UN",pb:449.00,foto:"",desc:"Lixeira 240L com rodas preta/cinza."},
+  {cod:"200314",nome:"Sabonete Gel Natural 5L",cat:"Sabonetes",emb:"CX 2x5L",pb:25.70,foto:"",desc:"Sabonete líquido gel natural sem cheiro 5L."},
+  {cod:"200284",nome:"Sabonete Gel Erva Doce 5L",cat:"Sabonetes",emb:"CX 2x5L",pb:25.70,foto:"",desc:"Sabonete líquido gel erva doce 5L."},
+  {cod:"200303",nome:"Sabonete Gel Talco 5L",cat:"Sabonetes",emb:"CX 2x5L",pb:25.70,foto:"",desc:"Sabonete líquido gel talco 5L."},
+  {cod:"200093",nome:"Sapolio Cremoso Lavanda 300ml",cat:"Sabonetes",emb:"CX 24x300ml",pb:5.80,foto:"",desc:"Sapolio cremoso Nobre lavanda 300ml."},
+  {cod:"200341",nome:"Detergente Clorado Crystal Clor 5L",cat:"Detergentes Profissionais",emb:"CX 2x5L",pb:21.70,foto:"",desc:"Detergente clorado para desinfecção de pisos."},
+  {cod:"200315",nome:"Detergente Neutro Q-Ótimo 500ml",cat:"Detergentes Profissionais",emb:"CX 24x500ml",pb:2.32,foto:"",desc:"Detergente neutro Q-Ótimo 500ml."},
+  {cod:"200319",nome:"Limpa Cerâmica Q-Ótimo 1L",cat:"Detergentes Profissionais",emb:"CX 12x1L",pb:5.10,foto:"",desc:"Limpa cerâmica Q-Ótimo 1L."},
+  {cod:"200327",nome:"Limpa Pedras Thhor 5L",cat:"Detergentes Profissionais",emb:"CX 2x5L",pb:27.20,foto:"",desc:"Limpa pedras ácido para pedras naturais."},
+  {cod:"200258",nome:"Disco Limpeza Verde 350mm",cat:"Discos e Polimento",emb:"CX 20un",pb:26.60,foto:"",desc:"Disco limpeza verde 350mm para enceradeiras."},
+  {cod:"200262",nome:"Disco Polimento Bege 410mm",cat:"Discos e Polimento",emb:"CX 20un",pb:15.00,foto:"",desc:"Disco polimento bege 410mm."},
+  {cod:"200180",nome:"Disco Remoção Preto 350mm",cat:"Discos e Polimento",emb:"CX 20un",pb:26.60,foto:"",desc:"Disco remoção preto 350mm."},
+  {cod:"200286",nome:"Pasta Brilho Fuzetto 500g",cat:"Discos e Polimento",emb:"CX 24x500g",pb:6.70,foto:"",desc:"Pasta brilho Fuzetto 500g."},
+  {cod:"200015",nome:"Copo Descartável 200ml",cat:"Descartáveis",emb:"CX 25x100un",pb:5.50,foto:"",desc:"Copo descartável transparente 200ml."},
+  {cod:"200133",nome:"Copo Descartável 50ml",cat:"Descartáveis",emb:"CX 50x100un",pb:2.60,foto:"",desc:"Copo descartável transparente 50ml."},
+  {cod:"200285",nome:"Touca Descartável TNT",cat:"Descartáveis",emb:"PC 100un",pb:10.80,foto:"",desc:"Touca descartável TNT sanfonada."},
+  {cod:"200110",nome:"Tela Antirrespingo Mictório",cat:"Descartáveis",emb:"CX 96un",pb:7.00,foto:"",desc:"Tela antirrespingo para mictório."},
+  {cod:"200004",nome:"Balde Plástico Preto 12L",cat:"Utilidades",emb:"DÚZIA",pb:7.90,foto:"",desc:"Balde plástico concreto preto 12L."},
+  {cod:"200151",nome:"Cabo Madeira 1,20m",cat:"Utilidades",emb:"DÚZIA",pb:3.30,foto:"",desc:"Cabo madeira plastificado com rosca 1,20m."},
+  {cod:"200441",nome:"Cabo Madeira 1,50m",cat:"Utilidades",emb:"DÚZIA",pb:5.20,foto:"",desc:"Cabo madeira plastificado com rosca 1,50m."},
+  {cod:"200177",nome:"Pulverizador 500ml",cat:"Utilidades",emb:"CX 12un",pb:5.20,foto:"",desc:"Pulverizador 500ml para limpeza."},
+  {cod:"200232",nome:"Purificador Bom Ar Talco 360ml",cat:"Utilidades",emb:"UN",pb:16.20,foto:"",desc:"Purificador de ar Bom Ar talco 360ml."},
+  {cod:"200100",nome:"Tapete Sanitário 100x70cm",cat:"Utilidades",emb:"UN",pb:95.00,foto:"",desc:"Tapete sanitário grande 100x70cm. Em promoção."},
+];
+
+// CÁLCULOS
+function calcFelim(p){
+  const g=getG();
+  const custo=p.prom?p.pb:+(p.pb*(1-g.desconto/100)).toFixed(2);
+  const final=p.prom?p.pb:+(custo*(1+g.margem/100)).toFixed(2);
+  const com=+(final*g.comissao/100).toFixed(2);
+  return{final,com,tipo:'felim'};
+}
+function calcDistrib(p){
+  const g=getG();
+  
+  const final=+(p.pb*(1+g.margem/100)).toFixed(2);
+  const com=+(final*g.comissao/100).toFixed(2);
+  return{final,com,tipo:'distrib'};
+}
+
+let cart={},abaAtual='felim',filtro='Todos',exps={},soPromo=false;
+
+function setAba(aba,btn){
+  abaAtual=aba;
+  document.querySelectorAll('.loja-tab').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  filtro='Todos';soPromo=false;
+  document.getElementById('promoStrip').style.display=aba==='felim'?'flex':'none';
+  const di=document.getElementById('distribInfo');
+  di.className='distrib-info'+(aba==='distrib'?' show':'');
+  document.getElementById('searchInput').value='';
+  buildFiltros();renderLista();
+}
+
+function buildFiltros(){
+  const prods=abaAtual==='felim'?PF:PD;
+  const cats=['Todos',...new Set(prods.map(p=>p.cat))].sort((a,b)=>a==='Todos'?-1:a.localeCompare(b));
+  document.getElementById('filtersBar').innerHTML=cats.map(c=>`<button class="fchip ${c===filtro?'on':''}" onclick="setF('${c}',this)">${c}</button>`).join('');
+}
+
+function setF(c,btn){filtro=c;soPromo=false;document.querySelectorAll('.fchip').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderLista()}
+function togglePromo(){soPromo=!soPromo;if(soPromo){filtro='Todos';document.querySelectorAll('.fchip').forEach(b=>b.classList.remove('on'));document.querySelector('.fchip').classList.add('on')}renderLista()}
+
+function renderLista(){
+  const q=document.getElementById('searchInput').value.trim().toUpperCase();
+  const prods=abaAtual==='felim'?PF:PD;
+  const isD=abaAtual==='distrib';
+  const filtrados=prods.filter(p=>(!q||p.nome.toUpperCase().includes(q)||p.cod.includes(q)||(p.cat||'').toUpperCase().includes(q))&&(filtro==='Todos'||p.cat===filtro)&&(!soPromo||p.prom));
+  const el=document.getElementById('lista');
+  if(!filtrados.length){el.innerHTML=`<div class="empty"><div class="ei">🔍</div><p>Nenhum produto encontrado.</p></div>`;return}
+  const g={};filtrados.forEach(p=>{if(!g[p.cat])g[p.cat]=[];g[p.cat].push(p)});
+  let html='';
+  Object.keys(g).sort().forEach(cat=>{
+    html+=`<div class="cat-sep"><span class="cat-label">${cat}</span><div class="cat-linha"></div></div>`;
+    g[cat].forEach(p=>{
+      const {final}=isD?calcDistrib(p):calcFelim(p);
+      const qty=cart[p.cod]?.qty||0;
+      const ic=qty>0;
+      const exp=exps[p.cod];
+      const gv=getG();
+      const imgErr=`data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22><rect fill=%22%23e8f2ff%22 width=%22100%25%22 height=%22100%25%22/><text y=%2250%25%22 x=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 font-size=%2248%22>${isD?'🧹':'🧴'}</text></svg>`;
+      html+=`<div class="pcard ${ic?'in-cart':''} ${p.prom?'prom':''} ${isD?'distrib':''}" id="pc-${p.cod}">
+        <div class="pcard-img-wrap">
+          <img class="pcard-img" src="${p.foto}" onerror="this.src='${imgErr}'" alt="${p.nome}" loading="lazy">
+          ${p.prom&&!isD?`<span class="prom-badge">PROMOÇÃO</span><span class="prom-pct">${gv.descProm||10}% OFF</span>`:''}
+        </div>
+        <div class="pcard-body">
+          <div class="pcard-name">${p.nome}</div>
+          ${p.desc?`<div class="pcard-desc ${exp?'exp':''}" id="d-${p.cod}">${p.desc}</div><button class="btn-mais" onclick="toggleExp('${p.cod}')">${exp?'↑ menos':'ver mais ↓'}</button>`:''}
+          <div class="pcard-meta">
+            <span class="tag-emb">${p.emb}</span>
+            <span class="tag-cod">${p.cod}</span>
+            
+          </div>
+        </div>
+        <div class="pcard-price">
+          <div style="font-family:var(--mono);font-size:22px;font-weight:500;color:var(--azul);white-space:nowrap;letter-spacing:0">${fmtBRL(final)}</div>
+          <button class="btn-add ${ic?'ok':''}" onclick="addCart('${p.cod}','${isD?'distrib':'felim'}')">${ic?'✓ Adicionado':'+ Adicionar'}</button>
+        </div>
+        ${ic?`<div class="qty-strip" id="qs-${p.cod}"><div class="qty-btns"><button class="qbtn" onclick="chQ('${p.cod}',-1)">−</button><span class="qnum" id="qn-${p.cod}">${qty}</span><button class="qbtn" onclick="chQ('${p.cod}',1)">+</button></div><div class="qty-sub">Subtotal<strong>${fmtBRL(final*qty)}</strong></div></div>`:''}
+      </div>`;
+    });
+  });
+  el.innerHTML=html;
+}
+
+function toggleExp(cod){exps[cod]=!exps[cod];renderLista()}
+function getProd(cod){return PF.find(x=>x.cod===cod)||PD.find(x=>x.cod===cod)}
+function getPreco(p,tipo){return tipo==='distrib'?calcDistrib(p).final:calcFelim(p).final}
+
+function addCart(cod,tipo){
+  if(!cart[cod])cart[cod]={qty:0,tipo};
+  cart[cod].qty++;updateFab();renderLista();showToast('✓ Adicionado');
+}
+
+function chQ(cod,d){
+  if(!cart[cod])return;
+  cart[cod].qty=Math.max(0,cart[cod].qty+d);
+  if(!cart[cod].qty)delete cart[cod];
+  updateFab();
+  const p=getProd(cod);if(!p)return;
+  const{tipo}=cart[cod]||{tipo:'felim'};
+  const final=getPreco(p,cart[cod]?.tipo||tipo);
+  const qty=cart[cod]?.qty||0;
+  const card=document.getElementById(`pc-${cod}`);
+  const qs=document.getElementById(`qs-${cod}`);
+  const qn=document.getElementById(`qn-${cod}`);
+  const ab=card?.querySelector('.btn-add');
+  if(!qty){qs?.remove();card?.classList.remove('in-cart');if(ab){ab.textContent='+ Adicionar';ab.classList.remove('ok')}}
+  else{if(qn)qn.textContent=qty;if(qs)qs.querySelector('.qty-sub strong').textContent=fmtBRL(final*qty)}
+}
+
+function updateFab(){
+  const t=Object.values(cart).reduce((s,v)=>s+v.qty,0);
+  document.getElementById('fabBadge').textContent=t;
+  document.getElementById('fab').className='fab'+(t>0?' vis':'');
+}
+
+function abrirSheet(){
+  const keys=Object.keys(cart);if(!keys.length){showToast('Carrinho vazio!');return}
+  let total=0,html='';
+  keys.forEach(cod=>{
+    const p=getProd(cod);if(!p)return;
+    const{qty,tipo}=cart[cod];
+    const final=getPreco(p,tipo);
+    const sub=final*qty;total+=sub;
+    html+=`<div class="ci"><img class="ci-img" src="${p.foto}" onerror="this.style.display='none'" alt="${p.nome}"><div class="ci-info"><div class="ci-name">${p.nome}</div><div class="ci-qty">${qty}x · ${fmtBRL(final)}${tipo==='distrib'?' 🏭':''}</div></div><div class="ci-tot">${fmtBRL(sub)}</div></div>`;
+  });
+  const vs=get(K_VENDEDORAS);
+  const vSel=vs.length?`<div class="campo-grp"><div class="campo-tit">👤 Vendedor(a)</div><select class="vsel" id="vSel"><option value="">Selecione...</option>${vs.map(v=>`<option value="${v.pin}">${v.nome}</option>`).join('')}</select></div>`:'';
+  document.getElementById('sBody').innerHTML=`<div class="campo-grp"><div class="campo-tit">📋 Seus dados</div><input class="campo-inp" id="cNome" type="text" placeholder="Seu nome ou empresa"><input class="campo-inp" id="cTel" type="tel" placeholder="Seu WhatsApp"><input class="campo-inp" id="cEnd" type="text" placeholder="Endereço (opcional)"></div>${vSel}${html}<div class="totais"><div class="trow grand"><span class="tl">Total do orçamento</span><span class="tv">${fmtBRL(total)}</span></div></div><div class="orc-aviso"><div class="oa-ico">ℹ️</div><div><div class="oa-txt">Este é um orçamento</div><div class="oa-sub">Nossa equipe confirma e combina o pagamento.</div></div></div>`;
+  document.getElementById('sTitle').textContent='🛒 Seu pedido';
+  document.getElementById('sFoot').style.display='';
+  document.getElementById('overlay').classList.add('open');
+}
+
+function fecharSheet(){document.getElementById('overlay').classList.remove('open')}
+function fOv(e){if(e.target===document.getElementById('overlay'))fecharSheet()}
+
+function finalizar(){
+  const nome=document.getElementById('cNome')?.value.trim()||'Cliente';
+  const tel=(document.getElementById('cTel')?.value.trim()||'').replace(/\D/g,'');
+  const end=document.getElementById('cEnd')?.value.trim()||'';
+  const vPin=document.getElementById('vSel')?.value||'';
+  const keys=Object.keys(cart);if(!keys.length)return;
+  const g=getG();
+  let total=0,comissao=0;const itens=[];
+  let linhas=[`📋 *NOVO ORÇAMENTO — Azul Plin*\n`,`👤 *Cliente:* ${nome}`];
+  if(tel)linhas.push(`📱 *WhatsApp:* ${tel}`);
+  if(end)linhas.push(`📍 *Endereço:* ${end}`);
+  linhas.push('');linhas.push('*PRODUTOS:*');
+  keys.forEach(cod=>{
+    const p=getProd(cod);if(!p)return;
+    const{qty,tipo}=cart[cod];
+    const final=getPreco(p,tipo);
+    const sub=+(final*qty).toFixed(2);
+    const com=+(final*(g.comissao/100)*qty).toFixed(2);
+    total+=sub;comissao+=com;
+    itens.push({cod,nome:p.nome,emb:p.emb,qty,precoUnit:final,subtotal:sub,comissao:com,tipo});
+    linhas.push(`• ${p.nome} (${p.emb}) — ${qty}x — ${fmtBRL(sub)}${tipo==='distrib'?' [Dist.]':''}`);
+  });
+  linhas.push('');linhas.push(`💰 *TOTAL: ${fmtBRL(total)}*`);
+  linhas.push('_Aguardando confirmação de pagamento._');
+  linhas.push('_Azul Plin Soluções — CNPJ 39.491.290/0001-59_');
+  const vendas=get(K_VENDAS);
+  vendas.push({id:Date.now().toString(),data:new Date().toISOString(),cliente:{nome,tel,end},vendedoraPin:vPin,itens,total,comissao,lucro:+(total*0.25).toFixed(2),status:'orcamento'});
+  save(K_VENDAS,vendas);
+  const msg=encodeURIComponent(linhas.join('\n'));
+  window.open(`https://chat.whatsapp.com/${GRUPO_WA}?text=${msg}`,'_blank');
+  cart={};updateFab();
+  document.getElementById('sFoot').style.display='none';
+  document.getElementById('sTitle').textContent='✅ Enviado!';
+  document.getElementById('sBody').innerHTML=`<div class="success-wrap show"><div class="success-ico">🎉</div><div class="success-title">Orçamento Enviado!</div><div class="success-sub">Pedido enviado pelo WhatsApp.<br>Nossa equipe entrará em contato!</div></div>`;
+  renderLista();setTimeout(fecharSheet,3500);
+}
+
+function limpar(){if(!confirm('Limpar pedido?'))return;cart={};updateFab();fecharSheet();renderLista()}
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000)}
+buildFiltros();renderLista();
+</script>
+</body>
+</html>
